@@ -36,7 +36,7 @@ class UsersResolverOnlyBeforeTest {
   }
 
   @Test
-  void friendsTableShouldNotBeEmpty() {
+  void usersShouldBeResolved() {
     log.info("UserData: {}", userWithFriends);
     log.info("UserData: {}", commonUser);
 

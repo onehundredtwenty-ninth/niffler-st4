@@ -36,7 +36,7 @@ class UsersResolverWithBeforeTest {
   }
 
   @Test
-  void friendsTableShouldNotBeEmpty(@User(WITH_FRIENDS) UserJson userWithFriends, @User(COMMON) UserJson commonUser) {
+  void usersShouldBeResolved(@User(WITH_FRIENDS) UserJson userWithFriends, @User(COMMON) UserJson commonUser) {
     log.info("UserData: {}", userWithFriends);
     log.info("UserData: {}", commonUser);
 
