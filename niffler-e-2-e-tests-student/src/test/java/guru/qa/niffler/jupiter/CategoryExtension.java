@@ -1,7 +1,7 @@
 package guru.qa.niffler.jupiter;
 
 import guru.qa.niffler.api.CategoryApi;
-import guru.qa.niffler.api.RetrofitClientHolder;
+import guru.qa.niffler.api.SpendClient;
 import guru.qa.niffler.model.CategoryJson;
 import java.util.Objects;
 import java.util.Optional;
@@ -12,7 +12,7 @@ import org.junit.platform.commons.support.AnnotationSupport;
 public class CategoryExtension implements BeforeEachCallback {
 
   public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CategoryExtension.class);
-  private final CategoryApi categoryApi = new RetrofitClientHolder().getDefault().create(CategoryApi.class);
+  private final CategoryApi categoryApi = new SpendClient().getDefault().create(CategoryApi.class);
 
   @Override
   public void beforeEach(ExtensionContext extensionContext) throws Exception {

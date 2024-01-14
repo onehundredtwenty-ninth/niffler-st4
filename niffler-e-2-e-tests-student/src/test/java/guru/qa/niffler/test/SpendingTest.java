@@ -24,7 +24,7 @@ class SpendingTest extends BaseWebTest {
 
   @BeforeEach
   void doLogin() {
-    Selenide.open("http://127.0.0.1:3000/main");
+    Selenide.open("http://frontend.niffler.dc");
     welcomePage.clickLoginBtn();
     loginPage.fillLoginField("bee");
     loginPage.fillPasswordField("123");

@@ -4,7 +4,7 @@ import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
-public class RetrofitClientHolder {
+public class SpendClient {
 
   public Retrofit getDefault() {
     return new Retrofit.Builder()

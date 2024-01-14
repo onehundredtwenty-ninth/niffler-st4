@@ -1,6 +1,6 @@
 package guru.qa.niffler.jupiter;
 
-import guru.qa.niffler.api.RetrofitClientHolder;
+import guru.qa.niffler.api.SpendClient;
 import guru.qa.niffler.api.SpendApi;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
@@ -13,7 +13,7 @@ import org.junit.platform.commons.support.AnnotationSupport;
 public class SpendExtension implements BeforeEachCallback {
 
   public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(SpendExtension.class);
-  private final SpendApi spendApi = new RetrofitClientHolder().getDefault().create(SpendApi.class);
+  private final SpendApi spendApi = new SpendClient().getDefault().create(SpendApi.class);
 
   @Override
   public void beforeEach(ExtensionContext extensionContext) throws Exception {
