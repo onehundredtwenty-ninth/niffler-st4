@@ -46,7 +46,6 @@ public class UsersQueueExtension implements BeforeEachCallback, AfterTestExecuti
         .filter(s -> s.getAnnotation(User.class) != null && s.getType().isAssignableFrom(UserJson.class))
         .toList();
     var parametersFromBeforeMethod = getParamsFromBeforeEach(context);
-
     validateParameters(parametersFromTestMethod, parametersFromBeforeMethod);
 
     parametersFromTestMethod.forEach(s -> {
@@ -54,7 +53,7 @@ public class UsersQueueExtension implements BeforeEachCallback, AfterTestExecuti
       addUserToStore(context, testCandidate);
     });
 
-    if (parametersFromTestMethod.isEmpty()) {
+    if (parametersFromTestMethod.isEmpty() && !parametersFromBeforeMethod.isEmpty()) {
       parametersFromBeforeMethod.forEach(s -> {
         var testCandidate = getUserFromPool(s);
         addUserToStore(context, testCandidate);
@@ -104,11 +103,12 @@ public class UsersQueueExtension implements BeforeEachCallback, AfterTestExecuti
     return testCandidate;
   }
 
-  private void validateParameters(List<Parameter> parametersFromTestMethod, List<Parameter> parametersFromBeforeMethod) {
+  private void validateParameters(List<Parameter> parametersFromTestMethod,
+      List<Parameter> parametersFromBeforeMethod) {
     if (!parametersFromBeforeMethod.isEmpty() && !parametersFromTestMethod.isEmpty()) {
       if (parametersFromBeforeMethod.size() != parametersFromTestMethod.size()) {
-        throw new IllegalStateException("Количествво пользователей, подставляемых в beforeEach метод, должно "
-            + "совпадать с количеством пользователей в тестовый метод");
+        throw new IllegalStateException("Если мы подставляем пользователей И в before метод И в тестовый метод "
+            + "одновременно, то их количество должно совпадать");
       }
 
       for (int i = 0; i < parametersFromBeforeMethod.size(); i++) {
@@ -116,7 +116,8 @@ public class UsersQueueExtension implements BeforeEachCallback, AfterTestExecuti
         var testMethodParameterValue = parametersFromTestMethod.get(i).getAnnotation(User.class).value();
 
         if (!beforeMethodParameterValue.equals(testMethodParameterValue)) {
-          throw new IllegalStateException("Не совпадает тип пользователей переданных в before и в тестовый метод");
+          throw new IllegalStateException("Тип пользователей переданных в before метод не совпадает с типами "
+              + "пользователей, переданных в тестовый метод");
         }
       }
     }
