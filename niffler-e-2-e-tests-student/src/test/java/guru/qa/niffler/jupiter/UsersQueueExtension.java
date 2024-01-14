@@ -1,6 +1,8 @@
 package guru.qa.niffler.jupiter;
 
 import static guru.qa.niffler.jupiter.User.UserType.COMMON;
+import static guru.qa.niffler.jupiter.User.UserType.INVITATION_RECEIVED;
+import static guru.qa.niffler.jupiter.User.UserType.INVITATION_SEND;
 import static guru.qa.niffler.jupiter.User.UserType.WITH_FRIENDS;
 
 import guru.qa.niffler.model.CurrencyValues;
@@ -32,12 +34,23 @@ public class UsersQueueExtension implements BeforeEachCallback, AfterTestExecuti
   static {
     Queue<UserJson> friendsQueue = new ConcurrentLinkedQueue<>();
     Queue<UserJson> commonQueue = new ConcurrentLinkedQueue<>();
+    Queue<UserJson> invitationSend = new ConcurrentLinkedQueue<>();
+    Queue<UserJson> invitationReceived = new ConcurrentLinkedQueue<>();
+
     friendsQueue.add(user("dima", "12345", WITH_FRIENDS));
     friendsQueue.add(user("duck", "12345", WITH_FRIENDS));
+
     commonQueue.add(user("bee", "123", COMMON));
     commonQueue.add(user("barsik", "12345", COMMON));
+
+    invitationSend.add(user("barsik2", "123", INVITATION_SEND));
+
+    invitationReceived.add(user("barsik3", "123", INVITATION_RECEIVED));
+
     users.put(WITH_FRIENDS, friendsQueue);
     users.put(COMMON, commonQueue);
+    users.put(INVITATION_SEND, invitationSend);
+    users.put(INVITATION_RECEIVED, invitationReceived);
   }
 
   @Override
