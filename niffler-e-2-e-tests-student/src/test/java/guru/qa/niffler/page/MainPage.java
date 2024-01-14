@@ -20,16 +20,15 @@ public class MainPage {
 
   public void selectSpendingByDescription(String spendDescription) {
     findSpendingByDescription(spendDescription)
-        .$$("td")
-        .first()
+        .$("td")
         .click();
   }
 
-  public SelenideElement findSpendingByDescription(String spendDescription) {
+  private SelenideElement findSpendingByDescription(String spendDescription) {
     return getSpendingTableRows().find(text(spendDescription));
   }
 
-  public ElementsCollection getSpendingTableRows() {
+  private ElementsCollection getSpendingTableRows() {
     return $(".spendings-table tbody")
         .$$("tr");
   }

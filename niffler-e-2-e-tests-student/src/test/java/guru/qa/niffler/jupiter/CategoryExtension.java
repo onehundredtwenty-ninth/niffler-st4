@@ -37,7 +37,7 @@ public class CategoryExtension implements BeforeEachCallback {
       var categoryForTest = existedUserCategory.isPresent()
           ? existedUserCategory.get()
           : categoryApi.addCategory(categoryJson).execute().body();
-      extensionContext.getStore(NAMESPACE).put("category", categoryForTest);
+      extensionContext.getStore(NAMESPACE).put(extensionContext.getUniqueId(), categoryForTest);
     }
   }
 }

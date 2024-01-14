@@ -25,7 +25,7 @@ public class SpendExtension implements BeforeEachCallback {
     if (spend.isPresent()) {
       GenerateSpend spendData = spend.get();
       var category = spendData.category().isBlank()
-          ? ((CategoryJson) extensionContext.getStore(CategoryExtension.NAMESPACE).get("category")).category()
+          ? ((CategoryJson) extensionContext.getStore(CategoryExtension.NAMESPACE).get(extensionContext.getUniqueId())).category()
           : spendData.category();
 
       SpendJson spendJson = new SpendJson(
