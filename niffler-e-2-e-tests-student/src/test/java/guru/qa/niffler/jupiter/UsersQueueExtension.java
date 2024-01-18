@@ -11,7 +11,6 @@ import guru.qa.niffler.model.UserJson;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -61,17 +60,20 @@ public class UsersQueueExtension implements BeforeEachCallback, AfterTestExecuti
     var parametersFromBeforeMethod = getParamsFromBeforeEach(context);
     validateParameters(parametersFromTestMethod, parametersFromBeforeMethod);
 
+    var allUsersForTest = new ArrayList<UserJson>();
+
     parametersFromTestMethod.forEach(s -> {
       var testCandidate = getUserFromPool(s);
-      addUserToStore(context, testCandidate);
+      allUsersForTest.add(testCandidate);
     });
 
     if (parametersFromTestMethod.isEmpty() && !parametersFromBeforeMethod.isEmpty()) {
       parametersFromBeforeMethod.forEach(s -> {
         var testCandidate = getUserFromPool(s);
-        addUserToStore(context, testCandidate);
+        allUsersForTest.add(testCandidate);
       });
     }
+    context.getStore(NAMESPACE).put(context.getUniqueId(), allUsersForTest);
   }
 
   @SuppressWarnings("unchecked")
@@ -96,15 +98,6 @@ public class UsersQueueExtension implements BeforeEachCallback, AfterTestExecuti
       throws ParameterResolutionException {
     return extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), List.class)
         .get(parameterContext.getIndex());
-  }
-
-  @SuppressWarnings("unchecked")
-  private void addUserToStore(ExtensionContext context, UserJson user) {
-    if (context.getStore(NAMESPACE).get(context.getUniqueId()) == null) {
-      context.getStore(NAMESPACE).put(context.getUniqueId(), new ArrayList<>(List.of(user)));
-    } else {
-      context.getStore(NAMESPACE).get(context.getUniqueId(), List.class).add(user);
-    }
   }
 
   private UserJson getUserFromPool(Parameter parameter) {
@@ -137,23 +130,11 @@ public class UsersQueueExtension implements BeforeEachCallback, AfterTestExecuti
   }
 
   private List<Parameter> getParamsFromBeforeEach(ExtensionContext context) {
-    var method = Arrays.stream(context.getRequiredTestClass().getDeclaredMethods())
-        .filter(s -> s.getAnnotation(BeforeEach.class) != null)
-        .findFirst();
-
-    if (method.isEmpty() || method.get().getParameterCount() == 0) {
-      return Collections.emptyList();
-    }
-
-    var parametersFromBeforeMethod = Arrays.stream(method.get().getParameters())
+    return Arrays.stream(context.getRequiredTestClass().getDeclaredMethods())
+        .filter(s -> s.getAnnotation(BeforeEach.class) != null && s.getParameterCount() != 0)
+        .flatMap(s -> Arrays.stream(s.getParameters()))
         .filter(s -> s.getAnnotation(User.class) != null && s.getType().isAssignableFrom(UserJson.class))
         .toList();
-
-    if (parametersFromBeforeMethod.isEmpty()) {
-      return Collections.emptyList();
-    }
-
-    return parametersFromBeforeMethod;
   }
 
   private static UserJson user(String username, String password, User.UserType userType) {
