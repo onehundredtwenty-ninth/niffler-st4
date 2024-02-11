@@ -3,6 +3,7 @@ package guru.qa.niffler.db.repository;
 import guru.qa.niffler.db.DataSourceProvider;
 import guru.qa.niffler.db.JdbcUrl;
 import guru.qa.niffler.db.model.Authority;
+import guru.qa.niffler.db.model.CurrencyValues;
 import guru.qa.niffler.db.model.UserAuthEntity;
 import guru.qa.niffler.db.model.UserEntity;
 import java.sql.Connection;
@@ -18,8 +19,58 @@ public class UserRepositoryJdbc implements UserRepository {
 
   private final DataSource authDs = DataSourceProvider.INSTANCE.dataSource(JdbcUrl.AUTH);
   private final DataSource udDs = DataSourceProvider.INSTANCE.dataSource(JdbcUrl.USERDATA);
-
   private final PasswordEncoder pe = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+
+  @Override
+  public UserAuthEntity findByIdInAuth(UUID id) {
+    var query = "SELECT * FROM \"user\" WHERE id = ?";
+
+    try (var con = authDs.getConnection();
+        var ps = con.prepareStatement(query)){
+      ps.setObject(1, id);
+      try (var rs = ps.executeQuery()) {
+        if (rs.next()) {
+          var userAuthEntity = new UserAuthEntity();
+          userAuthEntity.setId(id);
+          userAuthEntity.setUsername(rs.getString("username"));
+          userAuthEntity.setPassword(rs.getString("password"));
+          userAuthEntity.setEnabled(rs.getBoolean("enabled"));
+          userAuthEntity.setAccountNonExpired(rs.getBoolean("account_non_expired"));
+          userAuthEntity.setAccountNonLocked(rs.getBoolean("account_non_locked"));
+          userAuthEntity.setCredentialsNonExpired(rs.getBoolean("credentials_non_expired"));
+          return userAuthEntity;
+        }
+      }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+    return null;
+  }
+
+  @Override
+  public UserEntity findByIdInUserdata(UUID id) {
+    var query = "SELECT * FROM \"user\" WHERE id = ?";
+
+    try (var con = udDs.getConnection();
+        var ps = con.prepareStatement(query)){
+      ps.setObject(1, id);
+      try (var rs = ps.executeQuery()) {
+        if (rs.next()) {
+          var user = new UserEntity();
+          user.setId(id);
+          user.setUsername(rs.getString("username"));
+          user.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
+          user.setFirstname(rs.getString("firstname"));
+          user.setSurname(rs.getString("surname"));
+          user.setPhoto(rs.getBytes("photo"));
+          return user;
+        }
+      }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+    return null;
+  }
 
   @Override
   public UserAuthEntity createInAuth(UserAuthEntity user) {

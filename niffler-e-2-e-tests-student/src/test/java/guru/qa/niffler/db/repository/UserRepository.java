@@ -6,6 +6,10 @@ import java.util.UUID;
 
 public interface UserRepository {
 
+  UserAuthEntity findByIdInAuth(UUID id);
+
+  UserEntity findByIdInUserdata(UUID id);
+
   UserAuthEntity createInAuth(UserAuthEntity user);
 
   UserEntity createInUserdata(UserEntity user);
