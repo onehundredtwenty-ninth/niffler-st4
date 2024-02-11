@@ -3,6 +3,7 @@ package guru.qa.niffler.db.repository;
 import guru.qa.niffler.db.DataSourceProvider;
 import guru.qa.niffler.db.JdbcUrl;
 import guru.qa.niffler.db.model.Authority;
+import guru.qa.niffler.db.model.AuthorityEntity;
 import guru.qa.niffler.db.model.CurrencyValues;
 import guru.qa.niffler.db.model.UserAuthEntity;
 import guru.qa.niffler.db.model.UserEntity;
@@ -38,6 +39,18 @@ public class UserRepositoryJdbc implements UserRepository {
           userAuthEntity.setAccountNonExpired(rs.getBoolean("account_non_expired"));
           userAuthEntity.setAccountNonLocked(rs.getBoolean("account_non_locked"));
           userAuthEntity.setCredentialsNonExpired(rs.getBoolean("credentials_non_expired"));
+
+          try (var psForAuthority = con.prepareStatement("SELECT * FROM \"authority\" WHERE user_id = ?")) {
+            psForAuthority.setObject(1, id);
+            try (var rsForAuthority = psForAuthority.executeQuery()) {
+              while (rsForAuthority.next()) {
+                var authority = new AuthorityEntity();
+                authority.setId((UUID) rsForAuthority.getObject("id"));
+                authority.setAuthority(Authority.valueOf(rsForAuthority.getString("authority")));
+                userAuthEntity.getAuthorities().add(authority);
+              }
+            }
+          }
           return userAuthEntity;
         }
       }

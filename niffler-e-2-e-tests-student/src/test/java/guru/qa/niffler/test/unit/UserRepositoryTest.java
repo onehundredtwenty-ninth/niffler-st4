@@ -20,7 +20,8 @@ class UserRepositoryTest {
         () -> Assertions.assertEquals(userAuth.getEnabled(), selectedUser.getEnabled()),
         () -> Assertions.assertEquals(userAuth.getAccountNonExpired(), selectedUser.getAccountNonExpired()),
         () -> Assertions.assertEquals(userAuth.getAccountNonLocked(), selectedUser.getAccountNonLocked()),
-        () -> Assertions.assertEquals(userAuth.getCredentialsNonExpired(), selectedUser.getCredentialsNonExpired())
+        () -> Assertions.assertEquals(userAuth.getCredentialsNonExpired(), selectedUser.getCredentialsNonExpired()),
+        () -> Assertions.assertEquals(userAuth.getAuthorities().size(), selectedUser.getAuthorities().size())
     );
   }
 
