@@ -3,6 +3,7 @@ package guru.qa.niffler.test.unit;
 import guru.qa.niffler.db.model.UserAuthEntity;
 import guru.qa.niffler.db.repository.UserRepositoryJdbc;
 import guru.qa.niffler.jupiter.DbUser;
+import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +30,7 @@ class UserRepositoryTest {
   @Test
   void updateUserFromAuthTest(UserAuthEntity userAuth) {
     var userRepository = new UserRepositoryJdbc();
-    userAuth.setUsername("updatedUserName");
+    userAuth.setUsername("updatedUserName" + UUID.randomUUID());
     userAuth.setEnabled(false);
     userAuth.setAccountNonExpired(false);
     userAuth.setAccountNonLocked(false);
