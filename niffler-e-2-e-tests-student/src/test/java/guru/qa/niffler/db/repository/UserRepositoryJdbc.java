@@ -26,7 +26,7 @@ public class UserRepositoryJdbc implements UserRepository {
     var query = "SELECT * FROM \"user\" WHERE id = ?";
 
     try (var con = authDs.getConnection();
-        var ps = con.prepareStatement(query)){
+        var ps = con.prepareStatement(query)) {
       ps.setObject(1, id);
       try (var rs = ps.executeQuery()) {
         if (rs.next()) {
@@ -52,7 +52,7 @@ public class UserRepositoryJdbc implements UserRepository {
     var query = "SELECT * FROM \"user\" WHERE id = ?";
 
     try (var con = udDs.getConnection();
-        var ps = con.prepareStatement(query)){
+        var ps = con.prepareStatement(query)) {
       ps.setObject(1, id);
       try (var rs = ps.executeQuery()) {
         if (rs.next()) {
@@ -153,6 +153,41 @@ public class UserRepositoryJdbc implements UserRepository {
       throw new RuntimeException(e);
     }
     return user;
+  }
+
+  @Override
+  public int updateInAuth(UserAuthEntity user) {
+    var query = "UPDATE \"user\" SET username = ?, enabled = ?, account_non_expired = ?, account_non_locked = ?, "
+        + "credentials_non_expired = ? WHERE id = ?";
+    try (Connection con = authDs.getConnection();
+        var ps = con.prepareStatement(query)) {
+      ps.setString(1, user.getUsername());
+      ps.setBoolean(2, user.getEnabled());
+      ps.setBoolean(3, user.getAccountNonExpired());
+      ps.setBoolean(4, user.getAccountNonLocked());
+      ps.setBoolean(5, user.getCredentialsNonExpired());
+      ps.setObject(6, user.getId());
+      return ps.executeUpdate();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public int updateInUserdata(UserEntity user) {
+    var query = "UPDATE \"user\" SET username = ?, currency = ?, firstname = ?, surname = ?, photo = ? WHERE id = ?";
+    try (Connection con = udDs.getConnection();
+        var ps = con.prepareStatement(query)) {
+      ps.setString(1, user.getUsername());
+      ps.setObject(2, user.getCurrency());
+      ps.setString(3, user.getFirstname());
+      ps.setString(4, user.getSurname());
+      ps.setBytes(5, user.getPhoto());
+      ps.setObject(6, user.getId());
+      return ps.executeUpdate();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   @Override

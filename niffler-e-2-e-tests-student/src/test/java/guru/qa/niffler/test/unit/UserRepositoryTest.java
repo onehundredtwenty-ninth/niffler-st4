@@ -23,4 +23,29 @@ class UserRepositoryTest {
         () -> Assertions.assertEquals(userAuth.getCredentialsNonExpired(), selectedUser.getCredentialsNonExpired())
     );
   }
+
+  @DbUser
+  @Test
+  void updateUserFromAuthTest(UserAuthEntity userAuth) {
+    var userRepository = new UserRepositoryJdbc();
+    userAuth.setUsername("updatedUserName");
+    userAuth.setEnabled(false);
+    userAuth.setAccountNonExpired(false);
+    userAuth.setAccountNonLocked(false);
+    userAuth.setCredentialsNonExpired(false);
+
+    var updatedRecords = userRepository.updateInAuth(userAuth);
+    Assertions.assertEquals(1, updatedRecords);
+
+    var selectedUser = userRepository.findByIdInAuth(userAuth.getId());
+
+    Assertions.assertAll(
+        () -> Assertions.assertEquals(userAuth.getId(), selectedUser.getId()),
+        () -> Assertions.assertEquals(userAuth.getUsername(), selectedUser.getUsername()),
+        () -> Assertions.assertEquals(userAuth.getEnabled(), selectedUser.getEnabled()),
+        () -> Assertions.assertEquals(userAuth.getAccountNonExpired(), selectedUser.getAccountNonExpired()),
+        () -> Assertions.assertEquals(userAuth.getAccountNonLocked(), selectedUser.getAccountNonLocked()),
+        () -> Assertions.assertEquals(userAuth.getCredentialsNonExpired(), selectedUser.getCredentialsNonExpired())
+    );
+  }
 }
