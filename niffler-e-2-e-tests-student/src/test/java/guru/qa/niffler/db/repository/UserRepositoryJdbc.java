@@ -30,10 +30,10 @@ public class UserRepositoryJdbc implements UserRepository {
           "INSERT INTO \"user\" " +
               "(username, password, enabled, account_non_expired, account_non_locked, credentials_non_expired) " +
               "VALUES (?, ?, ?, ?, ?, ?)", PreparedStatement.RETURN_GENERATED_KEYS);
-           PreparedStatement authorityPs = conn.prepareStatement(
-               "INSERT INTO \"authority\" " +
-                   "(user_id, authority) " +
-                   "VALUES (?, ?)")
+          PreparedStatement authorityPs = conn.prepareStatement(
+              "INSERT INTO \"authority\" " +
+                  "(user_id, authority) " +
+                  "VALUES (?, ?)")
       ) {
 
         userPs.setString(1, user.getUsername());
@@ -106,11 +106,36 @@ public class UserRepositoryJdbc implements UserRepository {
 
   @Override
   public void deleteInAuthById(UUID id) {
+    var queryForDeleteUser = "DELETE FROM \"user\" WHERE id = ?";
+    var queryForDeleteAuthority = "DELETE FROM \"authority\" WHERE user_id = ?";
 
+    try (var con = authDs.getConnection();
+        var psForDeleteUser = con.prepareStatement(queryForDeleteUser);
+        var psForDeleteAuthority = con.prepareStatement(queryForDeleteAuthority)) {
+      con.setAutoCommit(false);
+
+      psForDeleteAuthority.setObject(1, id);
+      psForDeleteAuthority.executeUpdate();
+
+      psForDeleteUser.setObject(1, id);
+      psForDeleteUser.executeUpdate();
+
+      con.commit();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   @Override
   public void deleteInUserdataById(UUID id) {
+    var query = "DELETE FROM \"user\" WHERE id = ?";
 
+    try (var con = udDs.getConnection();
+        var ps = con.prepareStatement(query)) {
+      ps.setObject(1, id);
+      ps.executeUpdate();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
   }
 }
