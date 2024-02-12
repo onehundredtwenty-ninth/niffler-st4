@@ -20,6 +20,7 @@ import org.junit.platform.commons.support.AnnotationSupport;
 public class DbUserExtension implements BeforeEachCallback, ParameterResolver, AfterEachCallback {
 
   public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(DbUserExtension.class);
+  public final Faker faker = new Faker();
 
   @Override
   public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
@@ -53,7 +54,6 @@ public class DbUserExtension implements BeforeEachCallback, ParameterResolver, A
     );
 
     if (dbUser.isPresent()) {
-      var faker = new Faker();
       var userAuth = new UserAuthEntity();
       userAuth.setUsername(dbUser.get().username().isBlank() ? faker.name().username() : dbUser.get().username());
       userAuth.setPassword(dbUser.get().password().isBlank() ? faker.internet().password() : dbUser.get().password());
