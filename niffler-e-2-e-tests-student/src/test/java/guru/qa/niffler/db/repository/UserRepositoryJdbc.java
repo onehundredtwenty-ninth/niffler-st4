@@ -172,15 +172,41 @@ public class UserRepositoryJdbc implements UserRepository {
   public int updateInAuth(UserAuthEntity user) {
     var query = "UPDATE \"user\" SET username = ?, enabled = ?, account_non_expired = ?, account_non_locked = ?, "
         + "credentials_non_expired = ? WHERE id = ?";
-    try (Connection con = authDs.getConnection();
-        var ps = con.prepareStatement(query)) {
-      ps.setString(1, user.getUsername());
-      ps.setBoolean(2, user.getEnabled());
-      ps.setBoolean(3, user.getAccountNonExpired());
-      ps.setBoolean(4, user.getAccountNonLocked());
-      ps.setBoolean(5, user.getCredentialsNonExpired());
-      ps.setObject(6, user.getId());
-      return ps.executeUpdate();
+    var queryForDeleteAuthority = "DELETE FROM \"authority\" WHERE user_id = ?";
+    var queryForInsertAuthority = "INSERT INTO \"authority\" (user_id, authority) VALUES (?, ?)";
+
+    try (Connection con = authDs.getConnection()) {
+      con.setAutoCommit(false);
+
+      try (var ps = con.prepareStatement(query);
+          var psForDelete = con.prepareStatement(queryForDeleteAuthority);
+          var psForInsert = con.prepareStatement(queryForInsertAuthority)) {
+        ps.setString(1, user.getUsername());
+        ps.setBoolean(2, user.getEnabled());
+        ps.setBoolean(3, user.getAccountNonExpired());
+        ps.setBoolean(4, user.getAccountNonLocked());
+        ps.setBoolean(5, user.getCredentialsNonExpired());
+        ps.setObject(6, user.getId());
+        var result = ps.executeUpdate();
+
+        psForDelete.setObject(1, user.getId());
+        psForDelete.executeUpdate();
+
+        for (var authority : user.getAuthorities()) {
+          psForInsert.setObject(1, user.getId());
+          psForInsert.setString(2, authority.getAuthority().name());
+          psForInsert.addBatch();
+          psForInsert.clearParameters();
+        }
+        psForInsert.executeBatch();
+
+        return result;
+      } catch (SQLException e) {
+        con.rollback();
+        throw new RuntimeException(e);
+      } finally {
+        con.setAutoCommit(true);
+      }
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
