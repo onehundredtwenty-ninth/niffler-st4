@@ -32,14 +32,15 @@ public class DbUserExtension implements BeforeEachCallback, ParameterResolver, A
   @Override
   public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
       throws ParameterResolutionException {
-    return extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId() + "-userAuth", UserAuthEntity.class);
+    return extensionContext.getStore(NAMESPACE)
+        .get(getStoreKeyForAuth(extensionContext.getUniqueId()), UserAuthEntity.class);
   }
 
   @Override
   public void afterEach(ExtensionContext context) throws Exception {
     var userRepository = new UserRepositoryJdbc();
-    var userAuth = context.getStore(NAMESPACE).get(context.getUniqueId() + "-userAuth", UserAuthEntity.class);
-    var user = context.getStore(NAMESPACE).get(context.getUniqueId() + "-user", UserEntity.class);
+    var userAuth = context.getStore(NAMESPACE).get(getStoreKeyForAuth(context.getUniqueId()), UserAuthEntity.class);
+    var user = context.getStore(NAMESPACE).get(getStoreKeyForUserData(context.getUniqueId()), UserEntity.class);
 
     userRepository.deleteInAuthById(userAuth.getId());
     userRepository.deleteInUserdataById(user.getId());
@@ -76,8 +77,16 @@ public class DbUserExtension implements BeforeEachCallback, ParameterResolver, A
       userRepository.createInAuth(userAuth);
       userRepository.createInUserdata(user);
 
-      context.getStore(NAMESPACE).put(context.getUniqueId() + "-userAuth", userAuth);
-      context.getStore(NAMESPACE).put(context.getUniqueId() + "-user", user);
+      context.getStore(NAMESPACE).put(getStoreKeyForAuth(context.getUniqueId()), userAuth);
+      context.getStore(NAMESPACE).put(getStoreKeyForUserData(context.getUniqueId()), user);
     }
+  }
+
+  public String getStoreKeyForAuth(String uniqueId) {
+    return uniqueId + "-userAuth";
+  }
+
+  public String getStoreKeyForUserData(String uniqueId) {
+    return uniqueId + "-user";
   }
 }
