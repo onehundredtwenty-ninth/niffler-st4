@@ -208,18 +208,25 @@ public class UserRepositoryJdbc implements UserRepository {
     var queryForDeleteUser = "DELETE FROM \"user\" WHERE id = ?";
     var queryForDeleteAuthority = "DELETE FROM \"authority\" WHERE user_id = ?";
 
-    try (var con = authDs.getConnection();
-        var psForDeleteUser = con.prepareStatement(queryForDeleteUser);
-        var psForDeleteAuthority = con.prepareStatement(queryForDeleteAuthority)) {
+    try (var con = authDs.getConnection()) {
       con.setAutoCommit(false);
 
-      psForDeleteAuthority.setObject(1, id);
-      psForDeleteAuthority.executeUpdate();
+      try (var psForDeleteUser = con.prepareStatement(queryForDeleteUser);
+          var psForDeleteAuthority = con.prepareStatement(queryForDeleteAuthority)) {
 
-      psForDeleteUser.setObject(1, id);
-      psForDeleteUser.executeUpdate();
+        psForDeleteAuthority.setObject(1, id);
+        psForDeleteAuthority.executeUpdate();
 
-      con.commit();
+        psForDeleteUser.setObject(1, id);
+        psForDeleteUser.executeUpdate();
+
+        con.commit();
+      } catch (SQLException e) {
+        con.rollback();
+        throw new RuntimeException(e);
+      } finally {
+        con.setAutoCommit(true);
+      }
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
