@@ -124,8 +124,12 @@ public class UserRepositorySJdbc implements UserRepository {
   }
 
   @Override
-  public int updateInUserdata(UserEntity user) {
-    return 0;
+  public UserEntity updateInUserdata(UserEntity user) {
+    udTemplate.update(
+        "UPDATE \"user\" SET username = ?, currency = ?, firstname = ?, surname = ?, photo = ? WHERE id = ?",
+        user.getUsername(), user.getCurrency(), user.getFirstname(), user.getSurname(), user.getPhoto(), user.getId()
+    );
+    return user;
   }
 
   @Override

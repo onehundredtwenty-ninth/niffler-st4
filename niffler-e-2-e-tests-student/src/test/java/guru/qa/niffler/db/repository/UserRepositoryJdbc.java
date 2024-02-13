@@ -214,7 +214,7 @@ public class UserRepositoryJdbc implements UserRepository {
   }
 
   @Override
-  public int updateInUserdata(UserEntity user) {
+  public UserEntity updateInUserdata(UserEntity user) {
     var query = "UPDATE \"user\" SET username = ?, currency = ?, firstname = ?, surname = ?, photo = ? WHERE id = ?";
     try (Connection con = udDs.getConnection();
         var ps = con.prepareStatement(query)) {
@@ -224,7 +224,7 @@ public class UserRepositoryJdbc implements UserRepository {
       ps.setString(4, user.getSurname());
       ps.setBytes(5, user.getPhoto());
       ps.setObject(6, user.getId());
-      return ps.executeUpdate();
+      return user;
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
