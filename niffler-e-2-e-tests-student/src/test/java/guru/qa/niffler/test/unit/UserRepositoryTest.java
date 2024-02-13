@@ -13,7 +13,7 @@ class UserRepositoryTest {
   @Test
   void selectUserFromAuthTest(UserAuthEntity userAuth) {
     var userRepository = new UserRepositoryJdbc();
-    var selectedUser = userRepository.findByIdInAuth(userAuth.getId());
+    var selectedUser = userRepository.findByIdInAuth(userAuth.getId()).orElseThrow();
 
     Assertions.assertAll(
         () -> Assertions.assertEquals(userAuth.getId(), selectedUser.getId()),
@@ -39,7 +39,7 @@ class UserRepositoryTest {
     var updatedRecords = userRepository.updateInAuth(userAuth);
     Assertions.assertEquals(1, updatedRecords);
 
-    var selectedUser = userRepository.findByIdInAuth(userAuth.getId());
+    var selectedUser = userRepository.findByIdInAuth(userAuth.getId()).orElseThrow();
 
     Assertions.assertAll(
         () -> Assertions.assertEquals(userAuth.getId(), selectedUser.getId()),
