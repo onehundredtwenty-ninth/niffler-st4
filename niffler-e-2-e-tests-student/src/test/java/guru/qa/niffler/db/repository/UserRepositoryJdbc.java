@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.UUID;
 import javax.sql.DataSource;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -23,7 +24,7 @@ public class UserRepositoryJdbc implements UserRepository {
   private final PasswordEncoder pe = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
   @Override
-  public UserAuthEntity findByIdInAuth(UUID id) {
+  public Optional<UserAuthEntity> findByIdInAuth(UUID id) {
     var query = "SELECT * FROM \"user\" WHERE id = ?";
 
     try (var con = authDs.getConnection();
@@ -51,17 +52,17 @@ public class UserRepositoryJdbc implements UserRepository {
               }
             }
           }
-          return userAuthEntity;
+          return Optional.of(userAuthEntity);
         }
       }
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
-    return null;
+    return Optional.empty();
   }
 
   @Override
-  public UserEntity findByIdInUserdata(UUID id) {
+  public Optional<UserEntity> findByIdInUserdata(UUID id) {
     var query = "SELECT * FROM \"user\" WHERE id = ?";
 
     try (var con = udDs.getConnection();
@@ -76,13 +77,13 @@ public class UserRepositoryJdbc implements UserRepository {
           user.setFirstname(rs.getString("firstname"));
           user.setSurname(rs.getString("surname"));
           user.setPhoto(rs.getBytes("photo"));
-          return user;
+          return Optional.of(user);
         }
       }
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
-    return null;
+    return Optional.empty();
   }
 
   @Override
