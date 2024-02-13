@@ -1,12 +1,12 @@
 package guru.qa.niffler.jupiter;
 
 import com.github.javafaker.Faker;
+import guru.qa.niffler.db.UserRepositorySupplier;
 import guru.qa.niffler.db.model.Authority;
 import guru.qa.niffler.db.model.AuthorityEntity;
 import guru.qa.niffler.db.model.CurrencyValues;
 import guru.qa.niffler.db.model.UserAuthEntity;
 import guru.qa.niffler.db.model.UserEntity;
-import guru.qa.niffler.db.repository.UserRepositoryJdbc;
 import java.util.Arrays;
 import java.util.Optional;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -38,7 +38,7 @@ public class DbUserExtension implements BeforeEachCallback, ParameterResolver, A
 
   @Override
   public void afterEach(ExtensionContext context) throws Exception {
-    var userRepository = new UserRepositoryJdbc();
+    var userRepository = new UserRepositorySupplier().get();
     var userAuth = context.getStore(NAMESPACE).get(getStoreKeyForAuth(context.getUniqueId()), UserAuthEntity.class);
     var user = context.getStore(NAMESPACE).get(getStoreKeyForUserData(context.getUniqueId()), UserEntity.class);
 
@@ -48,7 +48,7 @@ public class DbUserExtension implements BeforeEachCallback, ParameterResolver, A
 
   @Override
   public void beforeEach(ExtensionContext context) throws Exception {
-    var userRepository = new UserRepositoryJdbc();
+    var userRepository = new UserRepositorySupplier().get();
     Optional<DbUser> dbUser = AnnotationSupport.findAnnotation(
         context.getRequiredTestMethod(),
         DbUser.class
