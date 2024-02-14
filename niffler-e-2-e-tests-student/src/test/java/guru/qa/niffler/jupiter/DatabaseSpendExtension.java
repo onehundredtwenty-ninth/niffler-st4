@@ -1,5 +1,6 @@
 package guru.qa.niffler.jupiter;
 
+import guru.qa.niffler.db.model.CategoryEntity;
 import guru.qa.niffler.db.model.SpendEntity;
 import guru.qa.niffler.db.repository.CategoryRepository;
 import guru.qa.niffler.db.repository.CategoryRepositorySJdbc;
@@ -21,7 +22,15 @@ public class DatabaseSpendExtension extends SpendExtension {
     spendEntity.setAmount(spend.amount());
     spendEntity.setDescription(spend.description());
 
-    var category = categoryRepository.findCategoryByName(spend.category()).get();
+    var categoryOptional = categoryRepository.findCategoryByName(spend.category());
+    var category = categoryOptional.orElseGet(() -> {
+          var categoryEntity = new CategoryEntity();
+          categoryEntity.setUsername(spend.username());
+          categoryEntity.setCategory(spend.category());
+          return categoryRepository.createCategory(categoryEntity);
+        }
+    );
+
     spendEntity.setCategory(category);
 
     spendingRepository.createSpend(spendEntity);
