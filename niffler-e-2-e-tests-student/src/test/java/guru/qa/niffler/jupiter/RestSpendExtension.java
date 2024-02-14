@@ -27,7 +27,7 @@ public class RestSpendExtension extends SpendExtension {
           spend.category(),
           spend.username()
       );
-      categoryApi.addCategory(categoryJson);
+      categoryApi.addCategory(categoryJson).execute();
     }
 
     return spendApi.addSpend(spend).execute().body();
