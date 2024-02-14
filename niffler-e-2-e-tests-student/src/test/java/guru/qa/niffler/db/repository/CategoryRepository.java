@@ -6,5 +6,6 @@ import java.util.Optional;
 public interface CategoryRepository {
 
   CategoryEntity createCategory(CategoryEntity category);
+
   Optional<CategoryEntity> findCategoryByName(String name);
 }
