@@ -1,4 +1,4 @@
-package guru.qa.niffler.jupiter;
+package guru.qa.niffler.jupiter.extension;
 
 import com.github.javafaker.Faker;
 import guru.qa.niffler.db.UserRepositorySupplier;
@@ -7,6 +7,7 @@ import guru.qa.niffler.db.model.AuthorityEntity;
 import guru.qa.niffler.db.model.CurrencyValues;
 import guru.qa.niffler.db.model.UserAuthEntity;
 import guru.qa.niffler.db.model.UserEntity;
+import guru.qa.niffler.jupiter.annotation.DbUser;
 import java.util.Arrays;
 import java.util.Optional;
 import org.junit.jupiter.api.extension.AfterEachCallback;

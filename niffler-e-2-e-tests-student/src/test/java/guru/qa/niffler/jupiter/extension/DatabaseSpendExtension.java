@@ -1,4 +1,4 @@
-package guru.qa.niffler.jupiter;
+package guru.qa.niffler.jupiter.extension;
 
 import guru.qa.niffler.db.model.CategoryEntity;
 import guru.qa.niffler.db.model.SpendEntity;
