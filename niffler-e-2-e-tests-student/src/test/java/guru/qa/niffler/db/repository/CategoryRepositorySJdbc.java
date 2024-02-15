@@ -36,16 +36,16 @@ public class CategoryRepositorySJdbc implements CategoryRepository {
   }
 
   @Override
-  public Optional<CategoryEntity> findCategoryByName(String name) {
+  public Optional<CategoryEntity> findCategoryByName(String userName, String name) {
     try {
       return Optional.ofNullable(spendTemplate.queryForObject(
-          "SELECT * FROM \"category\" WHERE category = ?", (ResultSet rs, int rowNum) -> {
+          "SELECT * FROM \"category\" WHERE username = ? AND category = ?", (ResultSet rs, int rowNum) -> {
             var categoryEntity = new CategoryEntity();
             categoryEntity.setId((UUID) rs.getObject("id"));
             categoryEntity.setCategory(rs.getString("category"));
             categoryEntity.setUsername(rs.getString("username"));
             return categoryEntity;
-          }, name)
+          }, userName, name)
       );
     } catch (EmptyResultDataAccessException e) {
       return Optional.empty();

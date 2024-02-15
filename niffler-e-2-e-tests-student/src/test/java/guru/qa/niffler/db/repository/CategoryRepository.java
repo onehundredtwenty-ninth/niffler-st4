@@ -7,5 +7,5 @@ public interface CategoryRepository {
 
   CategoryEntity createCategory(CategoryEntity category);
 
-  Optional<CategoryEntity> findCategoryByName(String name);
+  Optional<CategoryEntity> findCategoryByName(String userName, String name);
 }

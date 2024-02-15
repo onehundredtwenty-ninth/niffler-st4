@@ -22,7 +22,7 @@ public class DatabaseSpendExtension extends SpendExtension {
     spendEntity.setAmount(spend.amount());
     spendEntity.setDescription(spend.description());
 
-    var categoryOptional = categoryRepository.findCategoryByName(spend.category());
+    var categoryOptional = categoryRepository.findCategoryByName(spend.username(), spend.category());
     var category = categoryOptional.orElseGet(() -> {
           var categoryEntity = new CategoryEntity();
           categoryEntity.setUsername(spend.username());
