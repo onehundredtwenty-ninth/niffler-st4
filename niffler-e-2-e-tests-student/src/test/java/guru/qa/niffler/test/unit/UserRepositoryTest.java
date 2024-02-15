@@ -2,8 +2,8 @@ package guru.qa.niffler.test.unit;
 
 import guru.qa.niffler.db.model.UserAuthEntity;
 import guru.qa.niffler.db.repository.UserRepository;
-import guru.qa.niffler.jupiter.DbUser;
-import guru.qa.niffler.jupiter.UserRepositoryExtension;
+import guru.qa.niffler.jupiter.annotation.DbUser;
+import guru.qa.niffler.jupiter.extension.UserRepositoryExtension;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

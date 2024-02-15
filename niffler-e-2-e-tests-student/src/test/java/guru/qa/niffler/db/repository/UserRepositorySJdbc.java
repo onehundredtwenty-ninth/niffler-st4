@@ -1,5 +1,7 @@
-package guru.qa.niffler.db;
+package guru.qa.niffler.db.repository;
 
+import guru.qa.niffler.db.DataSourceProvider;
+import guru.qa.niffler.db.JdbcUrl;
 import guru.qa.niffler.db.model.UserAuthEntity;
 import guru.qa.niffler.db.model.UserEntity;
 import guru.qa.niffler.db.repository.UserRepository;

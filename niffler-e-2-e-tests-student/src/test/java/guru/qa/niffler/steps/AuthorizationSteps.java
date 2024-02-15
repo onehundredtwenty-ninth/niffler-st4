@@ -15,8 +15,8 @@ public class AuthorizationSteps {
   public void doLogin(UserJson user) {
     Selenide.open("http://frontend.niffler.dc");
     welcomePage.clickLoginBtn();
-    loginPage.fillLoginField(user.username());
-    loginPage.fillPasswordField(user.testData().password());
+    loginPage.setLogin(user.username());
+    loginPage.setPassword(user.testData().password());
     loginPage.submit();
   }
 }

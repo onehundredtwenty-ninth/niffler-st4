@@ -2,7 +2,7 @@ package guru.qa.niffler.test;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
-import guru.qa.niffler.jupiter.GenerateSpend;
+import guru.qa.niffler.jupiter.annotation.GenerateSpend;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.page.LoginPage;
@@ -25,8 +25,8 @@ class SpendingTest extends BaseWebTest {
   void doLogin() {
     Selenide.open("http://frontend.niffler.dc");
     welcomePage.clickLoginBtn();
-    loginPage.fillLoginField("bee");
-    loginPage.fillPasswordField("123");
+    loginPage.setLogin("bee");
+    loginPage.setPassword("123");
     loginPage.submit();
   }
 

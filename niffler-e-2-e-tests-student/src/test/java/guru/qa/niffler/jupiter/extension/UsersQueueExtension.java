@@ -1,10 +1,11 @@
-package guru.qa.niffler.jupiter;
+package guru.qa.niffler.jupiter.extension;
 
-import static guru.qa.niffler.jupiter.User.UserType.COMMON;
-import static guru.qa.niffler.jupiter.User.UserType.INVITATION_RECEIVED;
-import static guru.qa.niffler.jupiter.User.UserType.INVITATION_SEND;
-import static guru.qa.niffler.jupiter.User.UserType.WITH_FRIENDS;
+import static guru.qa.niffler.jupiter.annotation.User.UserType.COMMON;
+import static guru.qa.niffler.jupiter.annotation.User.UserType.INVITATION_RECEIVED;
+import static guru.qa.niffler.jupiter.annotation.User.UserType.INVITATION_SEND;
+import static guru.qa.niffler.jupiter.annotation.User.UserType.WITH_FRIENDS;
 
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.UserJson;

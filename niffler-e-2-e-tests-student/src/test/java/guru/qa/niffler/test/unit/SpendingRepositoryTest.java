@@ -5,7 +5,7 @@ import guru.qa.niffler.db.model.SpendEntity;
 import guru.qa.niffler.db.model.UserAuthEntity;
 import guru.qa.niffler.db.repository.SpendingRepositoryHibernate;
 import guru.qa.niffler.db.repository.SpendingRepository;
-import guru.qa.niffler.jupiter.DbUser;
+import guru.qa.niffler.jupiter.annotation.DbUser;
 import guru.qa.niffler.model.CurrencyValues;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
