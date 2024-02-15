@@ -3,7 +3,7 @@ package guru.qa.niffler.test.unit;
 import guru.qa.niffler.db.model.CategoryEntity;
 import guru.qa.niffler.db.model.SpendEntity;
 import guru.qa.niffler.db.model.UserAuthEntity;
-import guru.qa.niffler.db.repository.SpendRepositoryHibernate;
+import guru.qa.niffler.db.repository.SpendingRepositoryHibernate;
 import guru.qa.niffler.db.repository.SpendingRepository;
 import guru.qa.niffler.jupiter.DbUser;
 import guru.qa.niffler.model.CurrencyValues;
@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 
 class SpendingRepositoryTest {
 
-  private final SpendingRepository spendingRepository = new SpendRepositoryHibernate();
+  private final SpendingRepository spendingRepository = new SpendingRepositoryHibernate();
   private SpendEntity spend;
 
   @DbUser

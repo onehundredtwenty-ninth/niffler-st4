@@ -12,11 +12,11 @@ import java.util.UUID;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-public class SpendRepositoryHibernate extends JpaService implements SpendingRepository {
+public class SpendingRepositoryHibernate extends JpaService implements SpendingRepository {
 
   private final PasswordEncoder pe = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
-  public SpendRepositoryHibernate() {
+  public SpendingRepositoryHibernate() {
     super(
         Map.of(
             SPEND, EmfProvider.INSTANCE.emf(SPEND).createEntityManager()
