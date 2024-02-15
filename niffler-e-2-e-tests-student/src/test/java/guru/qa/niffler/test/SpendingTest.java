@@ -2,7 +2,6 @@ package guru.qa.niffler.test;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
-import guru.qa.niffler.jupiter.GenerateCategory;
 import guru.qa.niffler.jupiter.GenerateSpend;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
@@ -31,13 +30,10 @@ class SpendingTest extends BaseWebTest {
     loginPage.submit();
   }
 
-  @GenerateCategory(
-      username = "bee",
-      description = "Обучение"
-  )
   @GenerateSpend(
       username = "bee",
       description = "QA.GURU Advanced 4",
+      category = "Обучение49",
       amount = 72500.00,
       currency = CurrencyValues.RUB
   )
