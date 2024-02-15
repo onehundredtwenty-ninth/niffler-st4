@@ -58,6 +58,7 @@ public abstract class RestClient {
     this.okHttpClient = builder.build();
     this.retrofit = new Retrofit.Builder()
         .baseUrl(baseUri)
+        .client(okHttpClient)
         .addConverterFactory(converter)
         .build();
   }
