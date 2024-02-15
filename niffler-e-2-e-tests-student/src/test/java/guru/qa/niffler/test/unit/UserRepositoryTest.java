@@ -1,18 +1,22 @@
 package guru.qa.niffler.test.unit;
 
 import guru.qa.niffler.db.model.UserAuthEntity;
-import guru.qa.niffler.db.repository.UserRepositoryJdbc;
+import guru.qa.niffler.db.repository.UserRepository;
 import guru.qa.niffler.jupiter.DbUser;
+import guru.qa.niffler.jupiter.UserRepositoryExtension;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
+@ExtendWith(UserRepositoryExtension.class)
 class UserRepositoryTest {
+
+  private UserRepository userRepository;
 
   @DbUser
   @Test
   void selectUserFromAuthTest(UserAuthEntity userAuth) {
-    var userRepository = new UserRepositoryJdbc();
     var selectedUser = userRepository.findByIdInAuth(userAuth.getId()).orElseThrow();
 
     Assertions.assertAll(
@@ -29,16 +33,13 @@ class UserRepositoryTest {
   @DbUser
   @Test
   void updateUserFromAuthTest(UserAuthEntity userAuth) {
-    var userRepository = new UserRepositoryJdbc();
     userAuth.setUsername("updatedUserName" + UUID.randomUUID());
     userAuth.setEnabled(false);
     userAuth.setAccountNonExpired(false);
     userAuth.setAccountNonLocked(false);
     userAuth.setCredentialsNonExpired(false);
 
-    var updatedRecords = userRepository.updateInAuth(userAuth);
-    Assertions.assertEquals(1, updatedRecords);
-
+    userRepository.updateInAuth(userAuth);
     var selectedUser = userRepository.findByIdInAuth(userAuth.getId()).orElseThrow();
 
     Assertions.assertAll(

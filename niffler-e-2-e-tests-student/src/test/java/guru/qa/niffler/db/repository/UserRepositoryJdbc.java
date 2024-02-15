@@ -170,7 +170,7 @@ public class UserRepositoryJdbc implements UserRepository {
   }
 
   @Override
-  public int updateInAuth(UserAuthEntity user) {
+  public UserAuthEntity updateInAuth(UserAuthEntity user) {
     var query = "UPDATE \"user\" SET username = ?, enabled = ?, account_non_expired = ?, account_non_locked = ?, "
         + "credentials_non_expired = ? WHERE id = ?";
     var queryForDeleteAuthority = "DELETE FROM \"authority\" WHERE user_id = ?";
@@ -188,7 +188,7 @@ public class UserRepositoryJdbc implements UserRepository {
         ps.setBoolean(4, user.getAccountNonLocked());
         ps.setBoolean(5, user.getCredentialsNonExpired());
         ps.setObject(6, user.getId());
-        var result = ps.executeUpdate();
+        ps.executeUpdate();
 
         psForDelete.setObject(1, user.getId());
         psForDelete.executeUpdate();
@@ -201,7 +201,7 @@ public class UserRepositoryJdbc implements UserRepository {
         }
         psForInsert.executeBatch();
 
-        return result;
+        return user;
       } catch (SQLException e) {
         con.rollback();
         throw new RuntimeException(e);
@@ -214,7 +214,7 @@ public class UserRepositoryJdbc implements UserRepository {
   }
 
   @Override
-  public int updateInUserdata(UserEntity user) {
+  public UserEntity updateInUserdata(UserEntity user) {
     var query = "UPDATE \"user\" SET username = ?, currency = ?, firstname = ?, surname = ?, photo = ? WHERE id = ?";
     try (Connection con = udDs.getConnection();
         var ps = con.prepareStatement(query)) {
@@ -224,7 +224,7 @@ public class UserRepositoryJdbc implements UserRepository {
       ps.setString(4, user.getSurname());
       ps.setBytes(5, user.getPhoto());
       ps.setObject(6, user.getId());
-      return ps.executeUpdate();
+      return user;
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }

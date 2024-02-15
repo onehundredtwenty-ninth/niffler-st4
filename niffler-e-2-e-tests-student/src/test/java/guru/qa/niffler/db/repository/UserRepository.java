@@ -15,9 +15,9 @@ public interface UserRepository {
 
   UserEntity createInUserdata(UserEntity user);
 
-  int updateInAuth(UserAuthEntity user);
+  UserAuthEntity updateInAuth(UserAuthEntity user);
 
-  int updateInUserdata(UserEntity user);
+  UserEntity updateInUserdata(UserEntity user);
 
   void deleteInAuthById(UUID id);
 
