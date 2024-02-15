@@ -1,7 +1,6 @@
 package guru.qa.niffler.jupiter.extension;
 
-import guru.qa.niffler.api.CategoryApi;
-import guru.qa.niffler.api.SpendClient;
+import guru.qa.niffler.api.CategoryApiClient;
 import guru.qa.niffler.jupiter.annotation.GenerateCategory;
 import guru.qa.niffler.model.CategoryJson;
 import java.util.Objects;
@@ -13,7 +12,7 @@ import org.junit.platform.commons.support.AnnotationSupport;
 public class CategoryExtension implements BeforeEachCallback {
 
   public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CategoryExtension.class);
-  private final CategoryApi categoryApi = new SpendClient().getDefault().create(CategoryApi.class);
+  private final CategoryApiClient categoryApiClient = new CategoryApiClient();
 
   @Override
   public void beforeEach(ExtensionContext extensionContext) throws Exception {
@@ -30,14 +29,12 @@ public class CategoryExtension implements BeforeEachCallback {
           categoryData.username()
       );
 
-      var existedUserCategories = categoryApi.getCategories(categoryData.username()).execute().body();
+      var existedUserCategories = categoryApiClient.getCategories(categoryData.username());
       var existedUserCategory = Objects.requireNonNull(existedUserCategories).stream()
           .filter(s -> s.category().equals(categoryData.description()))
           .findAny();
 
-      var categoryForTest = existedUserCategory.isPresent()
-          ? existedUserCategory.get()
-          : categoryApi.addCategory(categoryJson).execute().body();
+      var categoryForTest = existedUserCategory.orElseGet(() -> categoryApiClient.addCategory(categoryJson));
       extensionContext.getStore(NAMESPACE).put(extensionContext.getUniqueId(), categoryForTest);
     }
   }
