@@ -5,7 +5,7 @@ import static com.codeborne.selenide.Selenide.$;
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
 
-public class PeoplePage {
+public class PeoplePage extends BasePage<PeoplePage> {
 
   public void openByHeader() {
     $("a[href*='people']").click();
