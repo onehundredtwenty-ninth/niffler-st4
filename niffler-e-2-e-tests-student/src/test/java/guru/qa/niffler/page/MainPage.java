@@ -25,7 +25,7 @@ public class MainPage extends BasePage<MainPage> {
 
   public MainPage setCategory(String category) {
     categoryList.click();
-    $x("//*[@text()='" + category + "']").click();
+    $x("//*[text()='" + category + "']").click();
     return this;
   }
 
@@ -36,6 +36,7 @@ public class MainPage extends BasePage<MainPage> {
 
   public MainPage setSpendDateField(LocalDate date) {
     spendDateField.setValue(date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+    spendDateField.pressEnter();
     return this;
   }
 

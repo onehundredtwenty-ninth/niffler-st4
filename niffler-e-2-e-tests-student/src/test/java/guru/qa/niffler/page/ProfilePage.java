@@ -25,7 +25,7 @@ public class ProfilePage extends BasePage<ProfilePage> {
 
   public ProfilePage chooseCurrency(String currencyName) {
     currencyList.click();
-    $x("//*[@text()='" + currencyName + "']").click();
+    $x("//*[text()='" + currencyName + "']").click();
     return this;
   }
 
