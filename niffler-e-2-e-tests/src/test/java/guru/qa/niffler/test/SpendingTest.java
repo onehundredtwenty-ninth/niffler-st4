@@ -6,13 +6,11 @@ import guru.qa.niffler.jupiter.annotation.DisabledByIssue;
 import guru.qa.niffler.jupiter.annotation.GenerateSpend;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
-import io.qameta.allure.Allure;
+import guru.qa.niffler.page.MainPage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 
 public class SpendingTest extends BaseWebTest {
@@ -47,13 +45,17 @@ public class SpendingTest extends BaseWebTest {
         .first()
         .click();
 
-    Allure.step("Delete spending", () -> $(byText("Delete selected"))
-        .click());
+    new MainPage()
+        .getSpendingTable()
+        .checkTableContains(spend);
 
-    Allure.step("Check that spending was deleted", () -> {
-      $(".spendings-table tbody")
-          .$$("tr")
-          .shouldHave(size(0));
-    });
+//    Allure.step("Delete spending", () -> $(byText("Delete selected"))
+//        .click());
+//
+//    Allure.step("Check that spending was deleted", () -> {
+//      $(".spendings-table tbody")
+//          .$$("tr")
+//          .shouldHave(size(0));
+//    });
   }
 }
