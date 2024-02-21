@@ -2,7 +2,7 @@ package guru.qa.niffler.page.component;
 
 import static com.codeborne.selenide.Condition.exactText;
 import static com.codeborne.selenide.Selenide.$;
-import static guru.qa.niffler.condition.SpendCollectionCondition.spends;
+import static guru.qa.niffler.condition.SpendCollectionConditionStudent.spends;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
