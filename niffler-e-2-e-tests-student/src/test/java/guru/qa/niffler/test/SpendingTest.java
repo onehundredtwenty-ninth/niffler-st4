@@ -1,5 +1,8 @@
 package guru.qa.niffler.test;
 
+import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Selenide.$;
+
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.jupiter.annotation.GenerateSpend;
@@ -24,8 +27,8 @@ class SpendingTest extends BaseWebTest {
   @BeforeEach
   void doLogin() {
     Selenide.open("http://frontend.niffler.dc");
-    welcomePage.clickLoginBtn();
-    loginPage.setLogin("bee");
+    welcomePage.doLogin();
+    loginPage.setUsername("bee");
     loginPage.setPassword("123");
     loginPage.submit();
   }
@@ -39,8 +42,15 @@ class SpendingTest extends BaseWebTest {
   )
   @Test
   void spendingShouldBeDeletedByButtonDeleteSpending(SpendJson spend) {
-    mainPage.selectSpendingByDescription(spend.description());
-    mainPage.deleteSelected();
-    mainPage.tableWithSpendingShouldBeEmpty();
+    $(".spendings-table tbody")
+        .$$("tr")
+        .find(text(spend.description()))
+        .$$("td")
+        .first()
+        .click();
+
+    new MainPage()
+        .getSpendingTable()
+        .checkTableContains(spend);
   }
 }
