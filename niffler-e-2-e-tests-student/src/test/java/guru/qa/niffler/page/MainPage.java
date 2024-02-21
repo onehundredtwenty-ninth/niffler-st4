@@ -4,7 +4,10 @@ import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$x;
 
+import com.codeborne.selenide.CollectionCondition;
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.page.component.Calendar;
@@ -22,7 +25,6 @@ public class MainPage extends BasePage<MainPage> {
   protected final Header header = new Header();
   protected final Footer footer = new Footer();
   protected final SpendingTable spendingTable = new SpendingTable();
-
   private final SelenideElement addSpendingSection = $(".main-content__section-add-spending");
   private final Select categorySelect = new Select(addSpendingSection.$("div.select-wrapper"));
   private final Calendar calendar = new Calendar(addSpendingSection.$(".react-datepicker"));
@@ -30,6 +32,12 @@ public class MainPage extends BasePage<MainPage> {
   private final SelenideElement descriptionInput = addSpendingSection.$("input[name='description']");
   private final SelenideElement submitNewSpendingButton = addSpendingSection.$("button[type='submit']");
   private final SelenideElement errorContainer = addSpendingSection.$(".form__error");
+  private final SelenideElement todayFilterBtn = $x("//button[text()='Today']");
+  private final SelenideElement lastWeekFilterBtn = $x("//button[text()='Last week']");
+  private final SelenideElement lastMonthFilterBtn = $x("//button[text()='Last month']");
+  private final SelenideElement allTimeFilterBtn = $x("//button[text()='All time']");
+  private final SelenideElement currencyFilter = $x(
+      "//div[@class='spendings__table-controls']//div[@class='select-wrapper']");
 
   public Header getHeader() {
     return header;
@@ -94,6 +102,65 @@ public class MainPage extends BasePage<MainPage> {
   @Step("Check error: {0} is displayed")
   public MainPage checkError(String error) {
     errorContainer.shouldHave(text(error));
+    return this;
+  }
+
+  public MainPage clickTodayFilterBtn() {
+    todayFilterBtn.click();
+    return this;
+  }
+
+  public MainPage clickLastWeekFilterBtn() {
+    lastWeekFilterBtn.click();
+    return this;
+  }
+
+  public MainPage clickLastMonthFilterBtn() {
+    lastMonthFilterBtn.click();
+    return this;
+  }
+
+  public MainPage clickAllTimeFilterBtn() {
+    allTimeFilterBtn.click();
+    return this;
+  }
+
+  public void tableWithSpendingShouldBeEmpty() {
+    getSpendingTableRows().shouldHave(CollectionCondition.empty);
+  }
+
+  public void deleteSelected() {
+    $(byText("Delete selected")).click();
+  }
+
+  public void selectSpendingByDescription(String spendDescription) {
+    findSpendingByDescription(spendDescription)
+        .$("td")
+        .click();
+  }
+
+  private SelenideElement findSpendingByDescription(String spendDescription) {
+    return getSpendingTableRows().find(text(spendDescription));
+  }
+
+  public void selectSpendingByIndex(int spendIndex) {
+    findSpendingByIndex(spendIndex)
+        .$("td")
+        .click();
+  }
+
+  private SelenideElement findSpendingByIndex(int spendIndex) {
+    return getSpendingTableRows().get(spendIndex);
+  }
+
+  private ElementsCollection getSpendingTableRows() {
+    return $(".spendings-table tbody")
+        .$$("tr");
+  }
+
+  public MainPage setCurrencyFilter(String currencyName) {
+    currencyFilter.click();
+    $x("//*[text()='" + currencyName + "']").click();
     return this;
   }
 }
