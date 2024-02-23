@@ -2,6 +2,7 @@ package guru.qa.niffler.jupiter.extension;
 
 import com.github.javafaker.Faker;
 import guru.qa.niffler.db.UserRepositorySupplier;
+import guru.qa.niffler.db.logging.JsonAllureAppender;
 import guru.qa.niffler.db.model.Authority;
 import guru.qa.niffler.db.model.AuthorityEntity;
 import guru.qa.niffler.db.model.CurrencyValues;
@@ -80,6 +81,7 @@ public class DbUserExtension implements BeforeEachCallback, ParameterResolver, A
 
       context.getStore(NAMESPACE).put(getStoreKeyForAuth(context.getUniqueId()), userAuth);
       context.getStore(NAMESPACE).put(getStoreKeyForUserData(context.getUniqueId()), user);
+      new JsonAllureAppender().logJson(user);
     }
   }
 
