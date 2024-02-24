@@ -1,13 +1,9 @@
 package guru.qa.niffler.api;
 
-import guru.qa.niffler.api.cookie.ThreadSafeCookieManager;
 import guru.qa.niffler.config.Config;
-import java.net.CookieManager;
-import java.net.CookiePolicy;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import okhttp3.Interceptor;
-import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Converter;
@@ -67,7 +63,7 @@ public abstract class RestClient {
         builder.addNetworkInterceptor(interceptor);
       }
     }
-    builder.cookieJar(new JavaNetCookieJar(new CookieManager(ThreadSafeCookieManager.INSTANCE, CookiePolicy.ACCEPT_ALL)));
+//    builder.cookieJar(new JavaNetCookieJar(new CookieManager(ThreadSafeCookieManager.INSTANCE, CookiePolicy.ACCEPT_ALL)));
     builder.addNetworkInterceptor(
         new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
     );
