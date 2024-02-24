@@ -27,35 +27,37 @@ public class SpendCollectionConditionStudent {
           return CheckResult.rejected("Incorrect table size", elements);
         }
 
-        for (WebElement element : elements) {
+        boolean isCheckSuccess = true;
+        List<SpendJson> actualSpends = new ArrayList<>();
+
+        for (var i = 0; i < elements.size(); i++) {
+          var element = elements.get(i);
           var tds = element.findElements(By.cssSelector("td"));
-          List<Boolean> checks = new ArrayList<>();
-          List<SpendJson> actualSpends = new ArrayList<>();
 
-          for (SpendJson expectedSpend : expectedSpends) {
-            var spendFromUi = new SpendJson(
-                null,
-                DateTimeUtils.dateFromString(tds.get(1).getText()),
-                tds.get(4).getText(),
-                CurrencyValues.valueOf(tds.get(3).getText()),
-                Double.parseDouble(tds.get(2).getText()),
-                tds.get(5).getText(),
-                expectedSpend.username()
-            );
+          var spendFromUi = new SpendJson(
+              null,
+              DateTimeUtils.dateFromString(tds.get(1).getText()),
+              tds.get(4).getText(),
+              CurrencyValues.valueOf(tds.get(3).getText()),
+              Double.parseDouble(tds.get(2).getText()),
+              tds.get(5).getText(),
+              expectedSpends[i].username()
+          );
 
-            actualSpends.add(spendFromUi);
-            checks.add(spendFromUi.equals(expectedSpend));
-          }
+          actualSpends.add(spendFromUi);
 
-          if (checks.size() < expectedSpends.length || checks.contains(false)) {
-            var errorMsg = String.format("Incorrect spends content. Expected spend list: %s, actual spend list: %s",
-                Arrays.toString(expectedSpends), actualSpends);
-            return CheckResult.rejected(errorMsg, elements);
-          } else {
-            return CheckResult.accepted();
+          if (!spendFromUi.equals(expectedSpends[i])) {
+            isCheckSuccess = false;
           }
         }
-        return super.check(driver, elements);
+
+        if (isCheckSuccess) {
+          return CheckResult.accepted();
+        } else {
+          var errorMsg = String.format("Incorrect spends content. Expected spend list: %s, actual spend list: %s",
+              Arrays.toString(expectedSpends), actualSpends);
+          return CheckResult.rejected(errorMsg, elements);
+        }
       }
 
       @Override
