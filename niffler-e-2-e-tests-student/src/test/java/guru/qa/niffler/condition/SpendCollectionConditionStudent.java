@@ -41,12 +41,17 @@ public class SpendCollectionConditionStudent {
               CurrencyValues.valueOf(tds.get(3).getText()),
               Double.parseDouble(tds.get(2).getText()),
               tds.get(5).getText(),
-              expectedSpends[i].username()
+              null
           );
 
           actualSpends.add(spendFromUi);
+          var isSpendTableDataMath = spendFromUi.spendDate().equals(expectedSpends[i].spendDate())
+              && spendFromUi.category().equals(expectedSpends[i].category())
+              && spendFromUi.currency().equals(expectedSpends[i].currency())
+              && spendFromUi.amount().equals(expectedSpends[i].amount())
+              && spendFromUi.description().equals(expectedSpends[i].description());
 
-          if (!spendFromUi.equals(expectedSpends[i])) {
+          if (!isSpendTableDataMath) {
             isCheckSuccess = false;
           }
         }
