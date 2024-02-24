@@ -6,6 +6,7 @@ import com.codeborne.selenide.WebDriverRunner;
 import guru.qa.niffler.api.AuthApiClient;
 import guru.qa.niffler.api.cookie.ThreadSafeCookieManager;
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.db.model.UserAuthEntity;
 import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.utils.OauthUtils;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
@@ -30,11 +31,21 @@ public class ApiLoginExtension implements BeforeEachCallback, AfterTestExecution
     ).orElse(null);
 
     if (apiLogin != null) {
+      var userName = apiLogin.username();
+      var password = apiLogin.password();
+
+      if (apiLogin.user() != null) {
+        var userAuth = extensionContext.getStore(DbUserExtension.NAMESPACE)
+            .get(DbUserExtension.getStoreKeyForAuth(extensionContext.getUniqueId()), UserAuthEntity.class);
+        userName = userAuth.getUsername();
+        password = userAuth.getPassword();
+      }
+
       final String codeVerifier = OauthUtils.generateCodeVerifier();
       final String codeChallenge = OauthUtils.generateCodeChallange(codeVerifier);
       setCodeVerifier(extensionContext, codeVerifier);
       setCodChallenge(extensionContext, codeChallenge);
-      authApiClient.doLogin(extensionContext, apiLogin.username(), apiLogin.password());
+      authApiClient.doLogin(extensionContext, userName, password);
 
       Selenide.open(CFG.frontUrl());
       SessionStorage sessionStorage = Selenide.sessionStorage();

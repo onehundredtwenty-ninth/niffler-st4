@@ -8,6 +8,7 @@ import guru.qa.niffler.db.model.AuthorityEntity;
 import guru.qa.niffler.db.model.CurrencyValues;
 import guru.qa.niffler.db.model.UserAuthEntity;
 import guru.qa.niffler.db.model.UserEntity;
+import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.DbUser;
 import java.util.Arrays;
 import java.util.Optional;
@@ -51,15 +52,21 @@ public class DbUserExtension implements BeforeEachCallback, ParameterResolver, A
   @Override
   public void beforeEach(ExtensionContext context) throws Exception {
     var userRepository = new UserRepositorySupplier().get();
-    Optional<DbUser> dbUser = AnnotationSupport.findAnnotation(
+    var dbUser = AnnotationSupport.findAnnotation(
         context.getRequiredTestMethod(),
         DbUser.class
-    );
+    ).orElseGet(() -> {
+      Optional<ApiLogin> apiLogin = AnnotationSupport.findAnnotation(
+          context.getRequiredTestMethod(),
+          ApiLogin.class
+      );
+      return apiLogin.map(ApiLogin::user).orElse(null);
+    });
 
-    if (dbUser.isPresent()) {
+    if (dbUser != null) {
       var userAuth = new UserAuthEntity();
-      userAuth.setUsername(dbUser.get().username().isBlank() ? faker.name().username() : dbUser.get().username());
-      userAuth.setPassword(dbUser.get().password().isBlank() ? faker.internet().password() : dbUser.get().password());
+      userAuth.setUsername(dbUser.username().isBlank() ? faker.name().username() : dbUser.username());
+      userAuth.setPassword(dbUser.password().isBlank() ? faker.internet().password() : dbUser.password());
 
       userAuth.setEnabled(true);
       userAuth.setAccountNonExpired(true);
@@ -85,11 +92,11 @@ public class DbUserExtension implements BeforeEachCallback, ParameterResolver, A
     }
   }
 
-  public String getStoreKeyForAuth(String uniqueId) {
+  public static String getStoreKeyForAuth(String uniqueId) {
     return uniqueId + "-userAuth";
   }
 
-  public String getStoreKeyForUserData(String uniqueId) {
+  public static String getStoreKeyForUserData(String uniqueId) {
     return uniqueId + "-user";
   }
 }
