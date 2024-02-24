@@ -11,11 +11,7 @@ import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.MainPage;
 import guru.qa.niffler.page.WelcomePage;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.Locale;
+import guru.qa.niffler.utils.DateTimeUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -63,11 +59,7 @@ class SpendingTest extends BaseWebTest {
   void spendingShouldBePresentedInTable() {
     var spend = new SpendJson(
         null,
-        Date.from(
-            LocalDate.parse("19 Feb 24", DateTimeFormatter.ofPattern("dd MMM yy", Locale.ENGLISH))
-                .atStartOfDay()
-                .toInstant(ZoneOffset.UTC)
-        ),
+        DateTimeUtils.dateFromString("19 Feb 24"),
         "Обучение49",
         CurrencyValues.USD,
         20000D,

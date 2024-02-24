@@ -6,14 +6,10 @@ import com.codeborne.selenide.Driver;
 import com.codeborne.selenide.impl.CollectionSource;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
+import guru.qa.niffler.utils.DateTimeUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.openqa.selenium.By;
@@ -39,11 +35,7 @@ public class SpendCollectionConditionStudent {
           for (SpendJson expectedSpend : expectedSpends) {
             var spendFromUi = new SpendJson(
                 null,
-                Date.from(
-                    LocalDate.parse(tds.get(1).getText(), DateTimeFormatter.ofPattern("dd MMM yy", Locale.ENGLISH))
-                        .atStartOfDay()
-                        .toInstant(ZoneOffset.UTC)
-                ),
+                DateTimeUtils.dateFromString(tds.get(1).getText()),
                 tds.get(4).getText(),
                 CurrencyValues.valueOf(tds.get(3).getText()),
                 Double.parseDouble(tds.get(2).getText()),
