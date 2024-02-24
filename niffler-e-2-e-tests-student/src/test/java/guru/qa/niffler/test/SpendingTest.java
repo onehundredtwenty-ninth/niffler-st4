@@ -50,8 +50,7 @@ class SpendingTest extends BaseWebTest {
         .first()
         .click();
 
-    new MainPage()
-        .getSpendingTable()
+    mainPage.getSpendingTable()
         .checkTableContains(spend);
   }
 
@@ -67,8 +66,7 @@ class SpendingTest extends BaseWebTest {
         "bee"
     );
 
-    new MainPage()
-        .getSpendingTable()
+    mainPage.getSpendingTable()
         .checkTableContains(spend);
   }
 }
