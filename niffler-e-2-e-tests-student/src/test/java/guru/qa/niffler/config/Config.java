@@ -8,6 +8,8 @@ public interface Config {
         : LocalConfig.instance;
   }
 
+  String authUrl();
+
   String frontUrl();
 
   String jdbcHost();
