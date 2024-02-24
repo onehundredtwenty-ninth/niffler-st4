@@ -25,9 +25,7 @@ public class JsonAllureAppender {
     if (o != null) {
       var mapper = new ObjectMapper();
       var objctAsString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(o);
-
-      var attachment = new JsonAttachment("Json attachment", objctAsString);
-      attachmentProcessor.addAttachment(attachment, new FreemarkerAttachmentRenderer(templateName));
+      logJson(objctAsString);
     }
   }
 }
