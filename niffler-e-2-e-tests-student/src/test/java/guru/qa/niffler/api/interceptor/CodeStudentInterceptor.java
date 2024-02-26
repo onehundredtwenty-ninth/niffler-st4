@@ -7,7 +7,7 @@ import okhttp3.Interceptor;
 import okhttp3.Response;
 import org.apache.commons.lang3.StringUtils;
 
-public class CodeInterceptorStudent implements Interceptor {
+public class CodeStudentInterceptor implements Interceptor {
 
   @Override
   public Response intercept(Chain chain) throws IOException {
