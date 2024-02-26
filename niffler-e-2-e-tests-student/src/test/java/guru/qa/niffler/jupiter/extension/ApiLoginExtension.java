@@ -34,7 +34,7 @@ public class ApiLoginExtension implements BeforeEachCallback, AfterTestExecution
       var userName = apiLogin.username();
       var password = apiLogin.password();
 
-      if (apiLogin.user() != null) {
+      if (apiLogin.user().handle()) {
         var userAuth = extensionContext.getStore(DbUserExtension.NAMESPACE)
             .get(DbUserExtension.getStoreKeyForAuth(extensionContext.getUniqueId()), UserAuthEntity.class);
         userName = userAuth.getUsername();
