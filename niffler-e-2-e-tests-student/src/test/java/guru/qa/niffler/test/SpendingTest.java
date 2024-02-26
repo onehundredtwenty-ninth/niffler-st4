@@ -11,6 +11,7 @@ import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.MainPage;
 import guru.qa.niffler.page.WelcomePage;
+import guru.qa.niffler.utils.DateTimeUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -49,8 +50,23 @@ class SpendingTest extends BaseWebTest {
         .first()
         .click();
 
-    new MainPage()
-        .getSpendingTable()
+    mainPage.getSpendingTable()
+        .checkTableContains(spend);
+  }
+
+  @Test
+  void spendingShouldBePresentedInTable() {
+    var spend = new SpendJson(
+        null,
+        DateTimeUtils.dateFromString("19 Feb 24"),
+        "Обучение49",
+        CurrencyValues.USD,
+        20000D,
+        "1217ed04-eb31-4b8a-8253-1213bcad8aa1",
+        "bee"
+    );
+
+    mainPage.getSpendingTable()
         .checkTableContains(spend);
   }
 }
