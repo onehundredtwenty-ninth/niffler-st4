@@ -1,7 +1,9 @@
 package guru.qa.niffler.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import guru.qa.niffler.api.interceptor.CodeInterceptor;
+import guru.qa.niffler.api.interceptor.CodeStudentInterceptor;
+import guru.qa.niffler.api.interceptor.RequestCookieInterceptor;
+import guru.qa.niffler.api.interceptor.ResponceCookieInterceptor;
 import guru.qa.niffler.jupiter.extension.ApiLoginExtension;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -15,7 +17,7 @@ public class AuthApiClient extends RestClient {
     super(
         CFG.authUrl(),
         true,
-        new CodeInterceptor()
+        new CodeStudentInterceptor(), new ResponceCookieInterceptor(), new RequestCookieInterceptor()
     );
     authApi = retrofit.create(AuthApi.class);
   }

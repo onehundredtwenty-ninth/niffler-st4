@@ -10,5 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 public @interface DbUser {
 
   String username() default "";
+
   String password() default "";
+
+  boolean handle() default true;
 }

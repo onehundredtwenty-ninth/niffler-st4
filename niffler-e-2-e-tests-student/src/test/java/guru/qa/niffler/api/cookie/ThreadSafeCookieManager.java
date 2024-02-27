@@ -6,6 +6,7 @@ import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public enum ThreadSafeCookieManager implements CookieStore {
   INSTANCE;
@@ -55,5 +56,12 @@ public enum ThreadSafeCookieManager implements CookieStore {
         .map(HttpCookie::getValue)
         .findFirst()
         .orElseThrow();
+  }
+
+  public String cookiesAsString() {
+    return getCookies().stream()
+        .map(s -> s.getName() + "=" + s.getValue())
+        .collect(Collectors.joining(";")
+        );
   }
 }
