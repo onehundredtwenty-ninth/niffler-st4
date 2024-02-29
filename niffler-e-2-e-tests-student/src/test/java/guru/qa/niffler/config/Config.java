@@ -12,6 +12,8 @@ public interface Config {
 
   String frontUrl();
 
+  String currencyGrpcHost();
+
   String jdbcHost();
 
   default String jdbcUser() {
@@ -24,5 +26,9 @@ public interface Config {
 
   default int jdbcPort() {
     return 5432;
+  }
+
+  default int currencyGrpcPort() {
+    return 8092;
   }
 }
