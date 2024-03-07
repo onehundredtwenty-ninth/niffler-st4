@@ -102,8 +102,7 @@ public class ApiLoginExtension implements BeforeEachCallback, AfterTestExecution
   @SuppressWarnings("unchecked")
   private static UserJson getCreatedUserForApiLogin(ExtensionContext extensionContext) {
     return ((List<UserJson>) extensionContext.getStore(CreateUserExtension.CREATE_USER_NAMESPACE).get(extensionContext.getUniqueId(), Map.class)
-        .get(User.Point.INNER))
-        .getFirst();
+        .get(User.Point.INNER)).get(0);
   }
 
   @Override
