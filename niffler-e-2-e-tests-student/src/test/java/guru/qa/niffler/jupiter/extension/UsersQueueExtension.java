@@ -1,11 +1,11 @@
 package guru.qa.niffler.jupiter.extension;
 
-import static guru.qa.niffler.jupiter.annotation.User.UserType.COMMON;
-import static guru.qa.niffler.jupiter.annotation.User.UserType.INVITATION_RECEIVED;
-import static guru.qa.niffler.jupiter.annotation.User.UserType.INVITATION_SEND;
-import static guru.qa.niffler.jupiter.annotation.User.UserType.WITH_FRIENDS;
+import static guru.qa.niffler.jupiter.annotation.UserQueue.UserType.COMMON;
+import static guru.qa.niffler.jupiter.annotation.UserQueue.UserType.INVITATION_RECEIVED;
+import static guru.qa.niffler.jupiter.annotation.UserQueue.UserType.INVITATION_SEND;
+import static guru.qa.niffler.jupiter.annotation.UserQueue.UserType.WITH_FRIENDS;
 
-import guru.qa.niffler.jupiter.annotation.User;
+import guru.qa.niffler.jupiter.annotation.UserQueue;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.UserJson;
@@ -29,7 +29,7 @@ public class UsersQueueExtension implements BeforeEachCallback, AfterTestExecuti
 
   public static final ExtensionContext.Namespace NAMESPACE
       = ExtensionContext.Namespace.create(UsersQueueExtension.class);
-  private static final Map<User.UserType, Queue<UserJson>> users = new ConcurrentHashMap<>();
+  private static final Map<UserQueue.UserType, Queue<UserJson>> users = new ConcurrentHashMap<>();
 
   static {
     Queue<UserJson> friendsQueue = new ConcurrentLinkedQueue<>();
@@ -56,7 +56,7 @@ public class UsersQueueExtension implements BeforeEachCallback, AfterTestExecuti
   @Override
   public void beforeEach(ExtensionContext context) {
     var parametersFromTestMethod = Arrays.stream(context.getRequiredTestMethod().getParameters())
-        .filter(s -> s.getAnnotation(User.class) != null && s.getType().isAssignableFrom(UserJson.class))
+        .filter(s -> s.getAnnotation(UserQueue.class) != null && s.getType().isAssignableFrom(UserJson.class))
         .toList();
     var parametersFromBeforeMethod = getParamsFromBeforeEach(context);
     validateParameters(parametersFromTestMethod, parametersFromBeforeMethod);
@@ -91,7 +91,7 @@ public class UsersQueueExtension implements BeforeEachCallback, AfterTestExecuti
   public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
       throws ParameterResolutionException {
     return parameterContext.getParameter().getType().isAssignableFrom(UserJson.class)
-        && parameterContext.getParameter().isAnnotationPresent(User.class);
+        && parameterContext.getParameter().isAnnotationPresent(UserQueue.class);
   }
 
   @Override
@@ -103,7 +103,7 @@ public class UsersQueueExtension implements BeforeEachCallback, AfterTestExecuti
 
   private UserJson getUserFromPool(Parameter parameter) {
     UserJson testCandidate = null;
-    var queue = users.get(parameter.getAnnotation(User.class).value());
+    var queue = users.get(parameter.getAnnotation(UserQueue.class).value());
     while (testCandidate == null) {
       testCandidate = queue.poll();
     }
@@ -119,8 +119,8 @@ public class UsersQueueExtension implements BeforeEachCallback, AfterTestExecuti
       }
 
       for (int i = 0; i < parametersFromBeforeMethod.size(); i++) {
-        var beforeMethodParameterValue = parametersFromBeforeMethod.get(i).getAnnotation(User.class).value();
-        var testMethodParameterValue = parametersFromTestMethod.get(i).getAnnotation(User.class).value();
+        var beforeMethodParameterValue = parametersFromBeforeMethod.get(i).getAnnotation(UserQueue.class).value();
+        var testMethodParameterValue = parametersFromTestMethod.get(i).getAnnotation(UserQueue.class).value();
 
         if (!beforeMethodParameterValue.equals(testMethodParameterValue)) {
           throw new IllegalStateException("Тип пользователей переданных в before метод не совпадает с типами "
@@ -134,11 +134,11 @@ public class UsersQueueExtension implements BeforeEachCallback, AfterTestExecuti
     return Arrays.stream(context.getRequiredTestClass().getDeclaredMethods())
         .filter(s -> s.getAnnotation(BeforeEach.class) != null && s.getParameterCount() != 0)
         .flatMap(s -> Arrays.stream(s.getParameters()))
-        .filter(s -> s.getAnnotation(User.class) != null && s.getType().isAssignableFrom(UserJson.class))
+        .filter(s -> s.getAnnotation(UserQueue.class) != null && s.getType().isAssignableFrom(UserJson.class))
         .toList();
   }
 
-  private static UserJson user(String username, String password, User.UserType userType) {
+  private static UserJson user(String username, String password, UserQueue.UserType userType) {
     return new UserJson(
         null,
         username,

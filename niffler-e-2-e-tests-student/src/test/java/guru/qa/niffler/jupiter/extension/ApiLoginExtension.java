@@ -6,16 +6,23 @@ import com.codeborne.selenide.WebDriverRunner;
 import guru.qa.niffler.api.AuthApiClient;
 import guru.qa.niffler.api.cookie.ThreadSafeCookieManager;
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.db.model.UserAuthEntity;
 import guru.qa.niffler.jupiter.annotation.ApiLogin;
+import guru.qa.niffler.jupiter.annotation.Token;
+import guru.qa.niffler.jupiter.annotation.User;
+import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.utils.OauthUtils;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.ParameterResolutionException;
+import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
 import org.openqa.selenium.Cookie;
 
-public class ApiLoginExtension implements BeforeEachCallback, AfterTestExecutionCallback {
+public class ApiLoginExtension implements BeforeEachCallback, AfterTestExecutionCallback, ParameterResolver {
 
   private static final Config CFG = Config.getInstance();
   private final AuthApiClient authApiClient = new AuthApiClient();
@@ -35,10 +42,9 @@ public class ApiLoginExtension implements BeforeEachCallback, AfterTestExecution
       var password = apiLogin.password();
 
       if (apiLogin.user().handle()) {
-        var userAuth = extensionContext.getStore(DbUserExtension.NAMESPACE)
-            .get(DbUserExtension.getStoreKeyForAuth(extensionContext.getUniqueId()), UserAuthEntity.class);
-        userName = userAuth.getUsername();
-        password = userAuth.getPassword();
+        var userAuth = getCreatedUserForApiLogin(extensionContext);
+        userName = userAuth.username();
+        password = userAuth.testData().password();
       }
 
       final String codeVerifier = OauthUtils.generateCodeVerifier();
@@ -69,6 +75,25 @@ public class ApiLoginExtension implements BeforeEachCallback, AfterTestExecution
   @Override
   public void afterTestExecution(ExtensionContext extensionContext) throws Exception {
     ThreadSafeCookieManager.INSTANCE.removeAll();
+  }
+
+  @Override
+  public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
+      throws ParameterResolutionException {
+    return AnnotationSupport.findAnnotation(parameterContext.getParameter(), Token.class).isPresent()
+        && parameterContext.getParameter().getType().isAssignableFrom(String.class);
+  }
+
+  @Override
+  public String resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
+      throws ParameterResolutionException {
+    return "Bearer " + getToken(extensionContext);
+  }
+
+  @SuppressWarnings("unchecked")
+  private static UserJson getCreatedUserForApiLogin(ExtensionContext extensionContext) {
+    return ((List<UserJson>) extensionContext.getStore(CreateUserExtension.CREATE_USER_NAMESPACE).get(extensionContext.getUniqueId(), Map.class)
+        .get(User.Point.INNER)).get(0);
   }
 
   public static void setCodeVerifier(ExtensionContext context, String codeVerifier) {

@@ -2,7 +2,7 @@ package guru.qa.niffler.test.unit;
 
 import guru.qa.niffler.db.model.UserAuthEntity;
 import guru.qa.niffler.db.repository.UserRepository;
-import guru.qa.niffler.jupiter.annotation.DbUser;
+import guru.qa.niffler.jupiter.annotation.CreateUser;
 import guru.qa.niffler.jupiter.extension.UserRepositoryExtension;
 import java.util.UUID;
 import org.junit.jupiter.api.Assertions;
@@ -14,7 +14,7 @@ class UserRepositoryTest {
 
   private UserRepository userRepository;
 
-  @DbUser
+  @CreateUser
   @Test
   void selectUserFromAuthTest(UserAuthEntity userAuth) {
     var selectedUser = userRepository.findByIdInAuth(userAuth.getId()).orElseThrow();
@@ -30,7 +30,7 @@ class UserRepositoryTest {
     );
   }
 
-  @DbUser
+  @CreateUser
   @Test
   void updateUserFromAuthTest(UserAuthEntity userAuth) {
     userAuth.setUsername("updatedUserName" + UUID.randomUUID());
