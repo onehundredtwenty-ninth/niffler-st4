@@ -9,7 +9,7 @@ import guru.qa.niffler.db.model.CurrencyValues;
 import guru.qa.niffler.db.model.UserAuthEntity;
 import guru.qa.niffler.db.model.UserEntity;
 import guru.qa.niffler.jupiter.annotation.ApiLogin;
-import guru.qa.niffler.jupiter.annotation.DbUser;
+import guru.qa.niffler.jupiter.annotation.CreateUser;
 import java.util.Arrays;
 import java.util.Optional;
 import org.junit.jupiter.api.extension.AfterEachCallback;
@@ -29,7 +29,7 @@ public class DbUserExtension implements BeforeEachCallback, ParameterResolver, A
   public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
       throws ParameterResolutionException {
     return parameterContext.getParameter().getType().isAssignableFrom(UserAuthEntity.class)
-        && extensionContext.getRequiredTestMethod().isAnnotationPresent(DbUser.class);
+        && extensionContext.getRequiredTestMethod().isAnnotationPresent(CreateUser.class);
   }
 
   @Override
@@ -54,7 +54,7 @@ public class DbUserExtension implements BeforeEachCallback, ParameterResolver, A
     var userRepository = new UserRepositorySupplier().get();
     var dbUser = AnnotationSupport.findAnnotation(
         context.getRequiredTestMethod(),
-        DbUser.class
+        CreateUser.class
     ).orElseGet(() -> {
       Optional<ApiLogin> apiLogin = AnnotationSupport.findAnnotation(
           context.getRequiredTestMethod(),

@@ -7,11 +7,9 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface ApiLogin {
+public @interface CreateUsers {
 
-  String username() default "";
+  boolean handle() default true;
 
-  String password() default "";
-
-  CreateUser user() default @CreateUser(handle = false);
+  CreateUser[] value() default {};
 }
