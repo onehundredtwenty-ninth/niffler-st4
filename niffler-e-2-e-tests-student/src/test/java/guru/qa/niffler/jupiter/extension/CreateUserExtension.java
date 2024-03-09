@@ -51,22 +51,28 @@ public abstract class CreateUserExtension implements BeforeEachCallback, Paramet
     setCreatedCategories(extensionContext, createdCategories);
     setCreatedSpends(extensionContext, createdSpends);
 
-    var innerUserJson = createdUsers.get(Point.INNER).get(0);
     var innerUser = usersForTest.get(Point.INNER).get(0);
-    List<UserJson> futureFriends = new ArrayList<>();
     if (innerUser.friends().handle()) {
-      for (int i = 0; i < innerUser.friends().count(); i++) {
-        var createdUser = createRandomUser();
-        futureFriends.add(createdUser);
+      createFriends(innerUser, createdUsers, extensionContext);
+    }
+  }
 
-        if (!innerUser.friends().pending()) {
-          createFriendship(innerUserJson.id(), createdUser.id(), false);
+  private void createFriends(CreateUser innerUser, Map<User.Point, List<UserJson>> createdUsers,
+      ExtensionContext extensionContext) {
+    var innerUserJson = createdUsers.get(Point.INNER).get(0);
+    List<UserJson> futureFriends = new ArrayList<>();
+
+    for (int i = 0; i < innerUser.friends().count(); i++) {
+      var createdUser = createRandomUser();
+      futureFriends.add(createdUser);
+
+      if (!innerUser.friends().pending()) {
+        createFriendship(innerUserJson.id(), createdUser.id(), false);
+      } else {
+        if (innerUser.friends().friendshipRequestType() == FriendshipRequestType.OUTCOME) {
+          createFriendship(innerUserJson.id(), createdUser.id(), true);
         } else {
-          if (innerUser.friends().friendshipRequestType() == FriendshipRequestType.OUTCOME) {
-            createFriendship(innerUserJson.id(), createdUser.id(), true);
-          } else {
-            createFriendship(createdUser.id(), innerUserJson.id(), true);
-          }
+          createFriendship(createdUser.id(), innerUserJson.id(), true);
         }
       }
     }
@@ -162,7 +168,7 @@ public abstract class CreateUserExtension implements BeforeEachCallback, Paramet
   @SuppressWarnings("unchecked")
   private List<UserJson> getCreatedFriends(ExtensionContext extensionContext) {
     return extensionContext.getStore(CREATE_USER_NAMESPACE)
-        .get(extensionContext.getUniqueId() + "createdFriends", List.class);
+        .getOrDefault(extensionContext.getUniqueId() + "createdFriends", List.class, new ArrayList<>());
   }
 
   private void setCreatedCategories(ExtensionContext extensionContext, List<CategoryJson> categoryJsons) {
