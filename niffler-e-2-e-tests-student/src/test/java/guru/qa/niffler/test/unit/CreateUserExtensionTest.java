@@ -23,11 +23,11 @@ class CreateUserExtensionTest extends BaseWebTest {
   })
   @ApiLogin(user = @CreateUser(
       categories = {
-          @GenerateCategory(description = "Обучение101"),
-          @GenerateCategory(description = "Обучение132")
+          @GenerateCategory(description = "Обучение5"),
+          @GenerateCategory(description = "Обучение6")
       },
       spends = @GenerateSpend(
-          category = "Обучение101",
+          category = "Обучение5",
           description = "Вокал",
           amount = 14000,
           currency = CurrencyValues.RUB
