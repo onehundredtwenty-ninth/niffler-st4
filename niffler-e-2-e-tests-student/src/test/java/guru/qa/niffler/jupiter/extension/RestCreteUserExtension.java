@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.lang3.NotImplementedException;
 import org.awaitility.Awaitility;
 
 public class RestCreteUserExtension extends CreateUserExtension {
@@ -125,5 +126,15 @@ public class RestCreteUserExtension extends CreateUserExtension {
   @Override
   public void deleteUser(UUID id) {
 
+  }
+
+  @Override
+  public UserJson createRandomUser() {
+    throw new NotImplementedException();
+  }
+
+  @Override
+  public void createFriendship(UUID firstFriendId, UUID secondFriendId) {
+    throw new NotImplementedException();
   }
 }

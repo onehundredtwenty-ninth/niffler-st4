@@ -2,9 +2,11 @@ package guru.qa.niffler.test.unit;
 
 import static guru.qa.niffler.jupiter.annotation.User.Point.OUTER;
 
+import guru.qa.niffler.api.FriendsApiClient;
 import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.CreateUser;
 import guru.qa.niffler.jupiter.annotation.CreateUsers;
+import guru.qa.niffler.jupiter.annotation.Friends;
 import guru.qa.niffler.jupiter.annotation.GenerateCategory;
 import guru.qa.niffler.jupiter.annotation.GenerateSpend;
 import guru.qa.niffler.jupiter.annotation.User;
@@ -15,6 +17,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class CreateUserExtensionTest extends BaseWebTest {
+
+  private final FriendsApiClient friendsApiClient = new FriendsApiClient();
 
   @Test
   @CreateUsers({
@@ -38,6 +42,20 @@ class CreateUserExtensionTest extends BaseWebTest {
         () -> Assertions.assertNotNull(user),
         () -> Assertions.assertNotNull(user.id()),
         () -> Assertions.assertEquals(2, outerUsers.length)
+    );
+  }
+
+  @Test
+  @ApiLogin(user = @CreateUser(friends = @Friends(count = 2)))
+  void createUserWithFriendsTest(@User UserJson user) {
+    Assertions.assertAll(
+        () -> Assertions.assertNotNull(user),
+        () -> Assertions.assertNotNull(user.id())
+    );
+    var friends = friendsApiClient.friends(user.username(), true);
+    Assertions.assertAll(
+        () -> Assertions.assertNotNull(friends),
+        () -> Assertions.assertEquals(2, friends.size())
     );
   }
 }

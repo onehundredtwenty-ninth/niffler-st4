@@ -15,4 +15,6 @@ public @interface CreateUser {
   GenerateCategory[] categories() default {};
 
   GenerateSpend[] spends() default {};
+
+  Friends friends() default @Friends(handle = false);
 }

@@ -10,6 +10,8 @@ import guru.qa.niffler.db.model.UserAuthEntity;
 import guru.qa.niffler.db.model.UserEntity;
 import guru.qa.niffler.db.repository.CategoryRepository;
 import guru.qa.niffler.db.repository.CategoryRepositorySJdbc;
+import guru.qa.niffler.db.repository.FriendshipRepository;
+import guru.qa.niffler.db.repository.FriendshipRepositorySJdbc;
 import guru.qa.niffler.db.repository.SpendingRepository;
 import guru.qa.niffler.db.repository.SpendingRepositorySJdbc;
 import guru.qa.niffler.db.repository.UserRepository;
@@ -30,6 +32,7 @@ public class DataBaseCreateUserExtension extends CreateUserExtension {
   private final UserRepository userRepository = new UserRepositorySupplier().get();
   private final CategoryRepository categoryRepository = new CategoryRepositorySJdbc();
   private final SpendingRepository spendingRepository = new SpendingRepositorySJdbc();
+  private final FriendshipRepository friendshipRepository = new FriendshipRepositorySJdbc();
 
   @Override
   public UserJson createUser(CreateUser user) {
@@ -157,5 +160,55 @@ public class DataBaseCreateUserExtension extends CreateUserExtension {
     System.out.println("Удаляем пользователя с id " + id);
     userRepository.deleteInAuthById(id);
     userRepository.deleteInUserdataById(id);
+  }
+
+  @Override
+  public UserJson createRandomUser() {
+    String username = DataUtils.generateRandomUsername();
+    String password ="12345";
+
+    UserAuthEntity userAuth = new UserAuthEntity();
+    userAuth.setUsername(username);
+    userAuth.setPassword(password);
+    userAuth.setEnabled(true);
+    userAuth.setAccountNonExpired(true);
+    userAuth.setAccountNonLocked(true);
+    userAuth.setCredentialsNonExpired(true);
+    var authorities = Arrays.stream(Authority.values()).map(
+        a -> {
+          AuthorityEntity ae = new AuthorityEntity();
+          ae.setAuthority(a);
+          return ae;
+        }
+    ).toList();
+
+    userAuth.setAuthorities(authorities);
+
+    UserEntity userEntity = new UserEntity();
+    userEntity.setUsername(username);
+    userEntity.setCurrency(CurrencyValues.RUB);
+
+    userRepository.createInAuth(userAuth);
+    userRepository.createInUserdata(userEntity);
+
+    System.out.println("Создан пользователь с id " + userEntity.getId());
+    return new UserJson(
+        userEntity.getId(),
+        userEntity.getUsername(),
+        userEntity.getFirstname(),
+        userEntity.getSurname(),
+        guru.qa.niffler.model.CurrencyValues.valueOf(userEntity.getCurrency().name()),
+        userEntity.getPhoto() == null ? "" : new String(userEntity.getPhoto()),
+        null,
+        new TestData(
+            password,
+            null
+        )
+    );
+  }
+
+  @Override
+  public void createFriendship(UUID firstFriendId, UUID secondFriendId) {
+    friendshipRepository.createFriendship(firstFriendId, secondFriendId, false);
   }
 }

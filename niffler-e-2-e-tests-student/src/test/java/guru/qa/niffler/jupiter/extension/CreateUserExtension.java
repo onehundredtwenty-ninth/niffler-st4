@@ -4,6 +4,7 @@ import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.CreateUser;
 import guru.qa.niffler.jupiter.annotation.CreateUsers;
 import guru.qa.niffler.jupiter.annotation.User;
+import guru.qa.niffler.jupiter.annotation.User.Point;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.model.UserJson;
@@ -50,6 +51,19 @@ public abstract class CreateUserExtension implements BeforeEachCallback, Paramet
         .put(extensionContext.getUniqueId() + "createdCategories", createdCategories);
     extensionContext.getStore(CREATE_USER_NAMESPACE)
         .put(extensionContext.getUniqueId() + "createdSpends", createdSpends);
+
+    var innerUserJson = createdUsers.get(Point.INNER).get(0);
+    var innerUser = usersForTest.get(Point.INNER).get(0);
+    List<UserJson> futureFriends = new ArrayList<>();
+    if (innerUser.friends().handle()) {
+      for (int i = 0; i < innerUser.friends().count(); i++) {
+        var createdUser = createRandomUser();
+        futureFriends.add(createdUser);
+        createFriendship(innerUserJson.id(), createdUser.id());
+      }
+    }
+    extensionContext.getStore(CREATE_USER_NAMESPACE)
+        .put(extensionContext.getUniqueId() + "createdFriends", futureFriends);
   }
 
   @Override
@@ -80,6 +94,8 @@ public abstract class CreateUserExtension implements BeforeEachCallback, Paramet
   public void afterEach(ExtensionContext extensionContext) throws Exception {
     Map<User.Point, List<UserJson>> createdUsers = extensionContext.getStore(CREATE_USER_NAMESPACE)
         .get(extensionContext.getUniqueId(), Map.class);
+    List<UserJson> createdFriends = extensionContext.getStore(CREATE_USER_NAMESPACE)
+        .get(extensionContext.getUniqueId() + "createdFriends", List.class);
     List<CategoryJson> createdCategories = extensionContext.getStore(CREATE_USER_NAMESPACE)
         .get(extensionContext.getUniqueId() + "createdCategories", List.class);
     List<SpendJson> createdSpends = extensionContext.getStore(CREATE_USER_NAMESPACE)
@@ -87,6 +103,7 @@ public abstract class CreateUserExtension implements BeforeEachCallback, Paramet
 
     createdSpends.forEach(s -> deleteSpend(s.id()));
     createdCategories.forEach(s -> deleteCategory(s.id()));
+    createdFriends.forEach(s -> deleteUser(s.id()));
     createdUsers.forEach((k, v) -> v.forEach(user -> deleteUser(user.id())));
   }
 
@@ -101,6 +118,10 @@ public abstract class CreateUserExtension implements BeforeEachCallback, Paramet
   public abstract void deleteCategory(UUID id);
 
   public abstract void deleteUser(UUID id);
+
+  public abstract UserJson createRandomUser();
+
+  public abstract void createFriendship(UUID firstFriendId, UUID secondFriendId);
 
   private Map<User.Point, List<CreateUser>> extractUsersForTest(ExtensionContext context) {
     Map<User.Point, List<CreateUser>> result = new HashMap<>();
