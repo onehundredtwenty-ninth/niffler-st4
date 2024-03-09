@@ -42,45 +42,7 @@ public class DataBaseCreateUserExtension extends CreateUserExtension {
     String password = user.password().isEmpty()
         ? "12345"
         : user.password();
-
-    UserAuthEntity userAuth = new UserAuthEntity();
-    userAuth.setUsername(username);
-    userAuth.setPassword(password);
-    userAuth.setEnabled(true);
-    userAuth.setAccountNonExpired(true);
-    userAuth.setAccountNonLocked(true);
-    userAuth.setCredentialsNonExpired(true);
-    var authorities = Arrays.stream(Authority.values()).map(
-        a -> {
-          AuthorityEntity ae = new AuthorityEntity();
-          ae.setAuthority(a);
-          return ae;
-        }
-    ).toList();
-
-    userAuth.setAuthorities(authorities);
-
-    UserEntity userEntity = new UserEntity();
-    userEntity.setUsername(username);
-    userEntity.setCurrency(CurrencyValues.RUB);
-
-    userRepository.createInAuth(userAuth);
-    userRepository.createInUserdata(userEntity);
-
-    System.out.println("Создан пользователь с id " + userEntity.getId());
-    return new UserJson(
-        userEntity.getId(),
-        userEntity.getUsername(),
-        userEntity.getFirstname(),
-        userEntity.getSurname(),
-        guru.qa.niffler.model.CurrencyValues.valueOf(userEntity.getCurrency().name()),
-        userEntity.getPhoto() == null ? "" : new String(userEntity.getPhoto()),
-        null,
-        new TestData(
-            password,
-            null
-        )
-    );
+    return createUser(username, password);
   }
 
   @Override
@@ -164,9 +126,17 @@ public class DataBaseCreateUserExtension extends CreateUserExtension {
 
   @Override
   public UserJson createRandomUser() {
-    String username = DataUtils.generateRandomUsername();
-    String password ="12345";
+    var username = DataUtils.generateRandomUsername();
+    var password = "12345";
+    return createUser(username, password);
+  }
 
+  @Override
+  public void createFriendship(UUID firstFriendId, UUID secondFriendId, Boolean isPending) {
+    friendshipRepository.createFriendship(firstFriendId, secondFriendId, isPending);
+  }
+
+  private UserJson createUser(String username, String password) {
     UserAuthEntity userAuth = new UserAuthEntity();
     userAuth.setUsername(username);
     userAuth.setPassword(password);
@@ -205,10 +175,5 @@ public class DataBaseCreateUserExtension extends CreateUserExtension {
             null
         )
     );
-  }
-
-  @Override
-  public void createFriendship(UUID firstFriendId, UUID secondFriendId, Boolean isPending) {
-    friendshipRepository.createFriendship(firstFriendId, secondFriendId, isPending);
   }
 }
