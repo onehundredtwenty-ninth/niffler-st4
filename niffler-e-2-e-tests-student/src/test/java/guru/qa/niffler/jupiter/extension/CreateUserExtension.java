@@ -3,6 +3,7 @@ package guru.qa.niffler.jupiter.extension;
 import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.CreateUser;
 import guru.qa.niffler.jupiter.annotation.CreateUsers;
+import guru.qa.niffler.jupiter.annotation.Friends.FriendshipRequestType;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.User.Point;
 import guru.qa.niffler.model.CategoryJson;
@@ -59,7 +60,16 @@ public abstract class CreateUserExtension implements BeforeEachCallback, Paramet
       for (int i = 0; i < innerUser.friends().count(); i++) {
         var createdUser = createRandomUser();
         futureFriends.add(createdUser);
-        createFriendship(innerUserJson.id(), createdUser.id());
+
+        if (!innerUser.friends().pending()) {
+          createFriendship(innerUserJson.id(), createdUser.id(), false);
+        } else {
+          if (innerUser.friends().friendshipRequestType() == FriendshipRequestType.OUTCOME) {
+            createFriendship(innerUserJson.id(), createdUser.id(), true);
+          } else {
+            createFriendship(createdUser.id(), innerUserJson.id(), true);
+          }
+        }
       }
     }
     extensionContext.getStore(CREATE_USER_NAMESPACE)
@@ -121,7 +131,7 @@ public abstract class CreateUserExtension implements BeforeEachCallback, Paramet
 
   public abstract UserJson createRandomUser();
 
-  public abstract void createFriendship(UUID firstFriendId, UUID secondFriendId);
+  public abstract void createFriendship(UUID firstFriendId, UUID secondFriendId, Boolean isPending);
 
   private Map<User.Point, List<CreateUser>> extractUsersForTest(ExtensionContext context) {
     Map<User.Point, List<CreateUser>> result = new HashMap<>();

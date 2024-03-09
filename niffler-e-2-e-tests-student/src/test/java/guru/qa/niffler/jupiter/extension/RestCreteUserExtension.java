@@ -134,7 +134,7 @@ public class RestCreteUserExtension extends CreateUserExtension {
   }
 
   @Override
-  public void createFriendship(UUID firstFriendId, UUID secondFriendId) {
+  public void createFriendship(UUID firstFriendId, UUID secondFriendId, Boolean isPending) {
     throw new NotImplementedException();
   }
 }

@@ -208,7 +208,7 @@ public class DataBaseCreateUserExtension extends CreateUserExtension {
   }
 
   @Override
-  public void createFriendship(UUID firstFriendId, UUID secondFriendId) {
-    friendshipRepository.createFriendship(firstFriendId, secondFriendId, false);
+  public void createFriendship(UUID firstFriendId, UUID secondFriendId, Boolean isPending) {
+    friendshipRepository.createFriendship(firstFriendId, secondFriendId, isPending);
   }
 }
