@@ -51,4 +51,9 @@ public class CategoryRepositorySJdbc implements CategoryRepository {
       return Optional.empty();
     }
   }
+
+  @Override
+  public void deleteCategory(UUID id) {
+    spendTemplate.update("DELETE FROM \"category\" WHERE id = ?", id);
+  }
 }

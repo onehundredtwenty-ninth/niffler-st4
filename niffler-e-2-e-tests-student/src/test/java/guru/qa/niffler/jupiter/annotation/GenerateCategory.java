@@ -12,7 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(CategoryExtension.class)
 public @interface GenerateCategory {
 
-  String username();
+  String username() default "";
 
   String description();
 }
