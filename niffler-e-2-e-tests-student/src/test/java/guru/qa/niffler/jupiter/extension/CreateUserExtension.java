@@ -48,10 +48,8 @@ public abstract class CreateUserExtension implements BeforeEachCallback, Paramet
     }
 
     extensionContext.getStore(CREATE_USER_NAMESPACE).put(extensionContext.getUniqueId(), createdUsers);
-    extensionContext.getStore(CREATE_USER_NAMESPACE)
-        .put(extensionContext.getUniqueId() + "createdCategories", createdCategories);
-    extensionContext.getStore(CREATE_USER_NAMESPACE)
-        .put(extensionContext.getUniqueId() + "createdSpends", createdSpends);
+    setCreatedCategories(extensionContext, createdCategories);
+    setCreatedSpends(extensionContext, createdSpends);
 
     var innerUserJson = createdUsers.get(Point.INNER).get(0);
     var innerUser = usersForTest.get(Point.INNER).get(0);
@@ -72,8 +70,7 @@ public abstract class CreateUserExtension implements BeforeEachCallback, Paramet
         }
       }
     }
-    extensionContext.getStore(CREATE_USER_NAMESPACE)
-        .put(extensionContext.getUniqueId() + "createdFriends", futureFriends);
+    setCreatedFriends(extensionContext, futureFriends);
   }
 
   @Override
@@ -104,12 +101,9 @@ public abstract class CreateUserExtension implements BeforeEachCallback, Paramet
   public void afterEach(ExtensionContext extensionContext) throws Exception {
     Map<User.Point, List<UserJson>> createdUsers = extensionContext.getStore(CREATE_USER_NAMESPACE)
         .get(extensionContext.getUniqueId(), Map.class);
-    List<UserJson> createdFriends = extensionContext.getStore(CREATE_USER_NAMESPACE)
-        .get(extensionContext.getUniqueId() + "createdFriends", List.class);
-    List<CategoryJson> createdCategories = extensionContext.getStore(CREATE_USER_NAMESPACE)
-        .get(extensionContext.getUniqueId() + "createdCategories", List.class);
-    List<SpendJson> createdSpends = extensionContext.getStore(CREATE_USER_NAMESPACE)
-        .get(extensionContext.getUniqueId() + "createdSpends", List.class);
+    var createdFriends = getCreatedFriends(extensionContext);
+    var createdCategories = getCreatedCategories(extensionContext);
+    var createdSpends = getCreatedSpends(extensionContext);
 
     createdSpends.forEach(s -> deleteSpend(s.id()));
     createdCategories.forEach(s -> deleteCategory(s.id()));
@@ -158,5 +152,38 @@ public abstract class CreateUserExtension implements BeforeEachCallback, Paramet
     );
     result.put(User.Point.OUTER, outerUsers);
     return result;
+  }
+
+  private void setCreatedFriends(ExtensionContext extensionContext, List<UserJson> futureFriends) {
+    extensionContext.getStore(CREATE_USER_NAMESPACE)
+        .put(extensionContext.getUniqueId() + "createdFriends", futureFriends);
+  }
+
+  @SuppressWarnings("unchecked")
+  private List<UserJson> getCreatedFriends(ExtensionContext extensionContext) {
+    return extensionContext.getStore(CREATE_USER_NAMESPACE)
+        .get(extensionContext.getUniqueId() + "createdFriends", List.class);
+  }
+
+  private void setCreatedCategories(ExtensionContext extensionContext, List<CategoryJson> categoryJsons) {
+    extensionContext.getStore(CREATE_USER_NAMESPACE)
+        .put(extensionContext.getUniqueId() + "createdCategories", categoryJsons);
+  }
+
+  @SuppressWarnings("unchecked")
+  private List<CategoryJson> getCreatedCategories(ExtensionContext extensionContext) {
+    return extensionContext.getStore(CREATE_USER_NAMESPACE)
+        .get(extensionContext.getUniqueId() + "createdCategories", List.class);
+  }
+
+  private void setCreatedSpends(ExtensionContext extensionContext, List<SpendJson> spendJsons) {
+    extensionContext.getStore(CREATE_USER_NAMESPACE)
+        .put(extensionContext.getUniqueId() + "createdSpends", spendJsons);
+  }
+
+  @SuppressWarnings("unchecked")
+  private List<SpendJson> getCreatedSpends(ExtensionContext extensionContext) {
+    return extensionContext.getStore(CREATE_USER_NAMESPACE)
+        .get(extensionContext.getUniqueId() + "createdSpends", List.class);
   }
 }
