@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+import "niffler-currency.proto";
+
+package guru.qa.grpc.niffler;
+
+option java_multiple_files = true;
+option java_package = "guru.qa.grpc.niffler.grpc";
+option java_outer_classname = "NifflerSpendProto";
+
+service NifflerCategoriesService {
+  rpc GetAllCategories (UserName) returns (CategoryResponse) {}
+  rpc AddCategory (Category) returns (Category) {}
+}
+
+service NifflerSpendService {
+  rpc GetSpends (SpendsRequest) returns (SpendsResponse) {}
+  rpc GetStatistic (SpendsRequest) returns (StatisticsResponse) {}
+  rpc AddSpend (Spend) returns (Spend) {}
+  rpc EditSpend (Spend) returns (Spend) {}
+  rpc DeleteSpend (DeleteRequest) returns (google.protobuf.Empty) {}
+}
+
+message UserName {
+  string username = 4;
+}
+
+message CategoryResponse {
+  repeated Category allCategories = 1;
+}
+
+message Category {
+  string id = 1;
+  string category = 2;
+  string username = 3;
+}
+
+message SpendsRequest {
+  string username = 1;
+  niffler.CurrencyValues currencyValues = 2;
+  string from = 3;
+  string to = 4;
+}
+
+message Spend {
+  string id = 1;
+  string spendDate = 2;
+  string category = 3;
+  niffler.CurrencyValues currency = 4;
+  double amount = 5;
+  string description = 6;
+  string username = 7;
+}
+
+message SpendsResponse {
+  repeated Spend spends = 1;
+}
+
+message StatisticResponse {
+  string dateFrom = 1;
+  string dateTo = 2;
+  niffler.CurrencyValues currency = 3;
+  double total = 4;
+  niffler.CurrencyValues userDefaultCurrency = 5;
+  double totalInUserDefaultCurrency = 6;
+  repeated StatisticByCategory statisticByCategory = 7;
+}
+
+message StatisticByCategory {
+  string category = 1;
+  double total = 2;
+  double totalInUserDefaultCurrency = 3;
+  repeated Spend spendResponse = 4;
+}
+
+message StatisticsResponse {
+  repeated StatisticResponse statistic = 1;
+}
+
+message DeleteRequest {
+  string username = 1;
+  repeated string ids = 2;
+}
