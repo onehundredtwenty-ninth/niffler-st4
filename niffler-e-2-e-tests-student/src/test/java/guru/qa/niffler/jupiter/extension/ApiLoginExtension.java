@@ -24,11 +24,18 @@ import org.openqa.selenium.Cookie;
 
 public class ApiLoginExtension implements BeforeEachCallback, AfterTestExecutionCallback, ParameterResolver {
 
+  public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(ApiLoginExtension.class);
   private static final Config CFG = Config.getInstance();
   private final AuthApiClient authApiClient = new AuthApiClient();
+  private final boolean initBrowser;
 
-  public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(ApiLoginExtension.class);
+  public ApiLoginExtension() {
+    this(true);
+  }
 
+  public ApiLoginExtension(boolean initBrowser) {
+    this.initBrowser = initBrowser;
+  }
 
   @Override
   public void beforeEach(ExtensionContext extensionContext) throws Exception {
@@ -53,22 +60,24 @@ public class ApiLoginExtension implements BeforeEachCallback, AfterTestExecution
       setCodChallenge(extensionContext, codeChallenge);
       authApiClient.doLogin(extensionContext, userName, password);
 
-      Selenide.open(CFG.frontUrl());
-      SessionStorage sessionStorage = Selenide.sessionStorage();
-      sessionStorage.setItem(
-          "codeChallenge", getCodChallenge(extensionContext)
-      );
-      sessionStorage.setItem(
-          "id_token", getToken(extensionContext)
-      );
-      sessionStorage.setItem(
-          "codeVerifier", getCodeVerifier(extensionContext)
-      );
+      if (initBrowser) {
+        Selenide.open(CFG.frontUrl());
+        SessionStorage sessionStorage = Selenide.sessionStorage();
+        sessionStorage.setItem(
+            "codeChallenge", getCodChallenge(extensionContext)
+        );
+        sessionStorage.setItem(
+            "id_token", getToken(extensionContext)
+        );
+        sessionStorage.setItem(
+            "codeVerifier", getCodeVerifier(extensionContext)
+        );
 
-      WebDriverRunner.getWebDriver().manage().addCookie(
-          jsessionCookie()
-      );
-      Selenide.refresh();
+        WebDriverRunner.getWebDriver().manage().addCookie(
+            jsessionCookie()
+        );
+        Selenide.refresh();
+      }
     }
   }
 
@@ -92,7 +101,8 @@ public class ApiLoginExtension implements BeforeEachCallback, AfterTestExecution
 
   @SuppressWarnings("unchecked")
   private static UserJson getCreatedUserForApiLogin(ExtensionContext extensionContext) {
-    return ((List<UserJson>) extensionContext.getStore(CreateUserExtension.CREATE_USER_NAMESPACE).get(extensionContext.getUniqueId(), Map.class)
+    return ((List<UserJson>) extensionContext.getStore(CreateUserExtension.CREATE_USER_NAMESPACE)
+        .get(extensionContext.getUniqueId(), Map.class)
         .get(User.Point.INNER)).get(0);
   }
 
