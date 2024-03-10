@@ -13,6 +13,11 @@ public class LocalConfig implements Config {
   }
 
   @Override
+  public String gatewayUrl() {
+    return "http://gateway.niffler.dc:8090";
+  }
+
+  @Override
   public String frontUrl() {
     return "http://frontend.niffler.dc";
   }

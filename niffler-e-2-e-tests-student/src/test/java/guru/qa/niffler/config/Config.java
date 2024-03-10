@@ -10,6 +10,8 @@ public interface Config {
 
   String authUrl();
 
+  String gatewayUrl();
+
   String frontUrl();
 
   String currencyGrpcHost();
