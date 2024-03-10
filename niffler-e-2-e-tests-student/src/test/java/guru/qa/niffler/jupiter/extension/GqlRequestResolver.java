@@ -17,14 +17,21 @@ public class GqlRequestResolver implements ParameterResolver {
   private final ClassLoader cl = GqlRequestResolver.class.getClassLoader();
 
   @Override
-  public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+  public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
+      throws ParameterResolutionException {
     return AnnotationSupport.isAnnotated(parameterContext.getParameter(), GqlRequestFile.class)
-        && parameterContext.getParameter().getType().isAssignableFrom(GqlRequest.class);
+        && parameterContext.getParameter().getType().isAssignableFrom(GqlRequest.class)
+        && !AnnotationSupport.findAnnotation(parameterContext.getParameter(), GqlRequestFile.class)
+        .orElseThrow()
+        .value()
+        .isBlank();
   }
 
   @Override
-  public GqlRequest resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-    GqlRequestFile annotation = AnnotationSupport.findAnnotation(parameterContext.getParameter(), GqlRequestFile.class).get();
+  public GqlRequest resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
+      throws ParameterResolutionException {
+    GqlRequestFile annotation = AnnotationSupport.findAnnotation(parameterContext.getParameter(), GqlRequestFile.class)
+        .orElseThrow();
     try (InputStream is = cl.getResourceAsStream(annotation.value())) {
       return om.readValue(is.readAllBytes(), GqlRequest.class);
     } catch (IOException e) {
