@@ -11,4 +11,10 @@ public @interface CreateUser {
   String password() default "";
 
   boolean handle() default true;
+
+  GenerateCategory[] categories() default {};
+
+  GenerateSpend[] spends() default {};
+
+  Friend[] friends() default {};
 }
