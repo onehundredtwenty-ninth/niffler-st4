@@ -2,8 +2,8 @@ package guru.qa.niffler.test.grphql;
 
 import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.CreateUser;
-import guru.qa.niffler.jupiter.annotation.Friends;
-import guru.qa.niffler.jupiter.annotation.Friends.FriendshipRequestType;
+import guru.qa.niffler.jupiter.annotation.Friend;
+import guru.qa.niffler.jupiter.annotation.Friend.FriendshipRequestType;
 import guru.qa.niffler.jupiter.annotation.GqlRequestFile;
 import guru.qa.niffler.jupiter.annotation.Token;
 import guru.qa.niffler.jupiter.annotation.User;
@@ -36,7 +36,10 @@ class StudentGqlUsersTest extends BaseGraphQLTest {
       "gql/getFriends2FriedsSubQuery.json, Can`t fetch over 2 friends sub-queries",
       "gql/getFriends2InvitationsSubQuery.json, Can`t fetch over 2 invitations sub-queries"
   })
-  @ApiLogin(user = @CreateUser(friends = @Friends(count = 2)))
+  @ApiLogin(user = @CreateUser(friends = {
+      @Friend,
+      @Friend
+  }))
   @ParameterizedTest
   void friendsInfoShouldNotBeReturned(@GqlRequestFile GqlRequest request, String expectedError,
       @Token String bearerToken) throws Exception {
@@ -49,7 +52,10 @@ class StudentGqlUsersTest extends BaseGraphQLTest {
     );
   }
 
-  @ApiLogin(user = @CreateUser(friends = @Friends(count = 2)))
+  @ApiLogin(user = @CreateUser(friends = {
+      @Friend,
+      @Friend
+  }))
   @Test
   void friendsInfoShouldBeReturned(@GqlRequestFile("gql/getFriendsQuery.json") GqlRequest request,
       @Token String bearerToken) throws Exception {
@@ -60,10 +66,12 @@ class StudentGqlUsersTest extends BaseGraphQLTest {
     );
   }
 
-  @ApiLogin(user = @CreateUser(friends = @Friends(
-      pending = true,
-      friendshipRequestType = FriendshipRequestType.INCOME
-  )))
+  @ApiLogin(user = @CreateUser(
+      friends = @Friend(
+          pending = true,
+          friendshipRequestType = FriendshipRequestType.INCOME
+      )
+  ))
   @Test
   void friendsInvitesInfoShouldBeReturned(@GqlRequestFile("gql/getFriendsQuery.json") GqlRequest request,
       @Token String bearerToken) throws Exception {
