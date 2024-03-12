@@ -16,5 +16,5 @@ public @interface CreateUser {
 
   GenerateSpend[] spends() default {};
 
-  Friends friends() default @Friends(handle = false);
+  Friend[] friends() default {};
 }

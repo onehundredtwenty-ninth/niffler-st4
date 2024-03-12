@@ -3,7 +3,7 @@ package guru.qa.niffler.jupiter.extension;
 import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.CreateUser;
 import guru.qa.niffler.jupiter.annotation.CreateUsers;
-import guru.qa.niffler.jupiter.annotation.Friends.FriendshipRequestType;
+import guru.qa.niffler.jupiter.annotation.Friend.FriendshipRequestType;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.User.Point;
 import guru.qa.niffler.model.CategoryJson;
@@ -52,7 +52,7 @@ public abstract class CreateUserExtension implements BeforeEachCallback, Paramet
     setCreatedSpends(extensionContext, createdSpends);
 
     var innerUser = usersForTest.get(Point.INNER).get(0);
-    if (innerUser.friends().handle()) {
+    if (innerUser.friends().length > 0) {
       createFriends(innerUser, createdUsers, extensionContext);
     }
   }
@@ -62,14 +62,14 @@ public abstract class CreateUserExtension implements BeforeEachCallback, Paramet
     var innerUserJson = createdUsers.get(Point.INNER).get(0);
     List<UserJson> futureFriends = new ArrayList<>();
 
-    for (int i = 0; i < innerUser.friends().count(); i++) {
+    for (int i = 0; i < innerUser.friends().length; i++) {
       var createdUser = createRandomUser();
       futureFriends.add(createdUser);
 
-      if (!innerUser.friends().pending()) {
+      if (!innerUser.friends()[i].pending()) {
         createFriendship(innerUserJson.id(), createdUser.id(), false);
       } else {
-        if (innerUser.friends().friendshipRequestType() == FriendshipRequestType.OUTCOME) {
+        if (innerUser.friends()[i].friendshipRequestType() == FriendshipRequestType.OUTCOME) {
           createFriendship(innerUserJson.id(), createdUser.id(), true);
         } else {
           createFriendship(createdUser.id(), innerUserJson.id(), true);

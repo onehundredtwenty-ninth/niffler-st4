@@ -6,8 +6,8 @@ import guru.qa.niffler.api.FriendsApiClient;
 import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.CreateUser;
 import guru.qa.niffler.jupiter.annotation.CreateUsers;
-import guru.qa.niffler.jupiter.annotation.Friends;
-import guru.qa.niffler.jupiter.annotation.Friends.FriendshipRequestType;
+import guru.qa.niffler.jupiter.annotation.Friend;
+import guru.qa.niffler.jupiter.annotation.Friend.FriendshipRequestType;
 import guru.qa.niffler.jupiter.annotation.GenerateCategory;
 import guru.qa.niffler.jupiter.annotation.GenerateSpend;
 import guru.qa.niffler.jupiter.annotation.User;
@@ -47,7 +47,10 @@ class CreateUserExtensionTest extends BaseWebTest {
   }
 
   @Test
-  @ApiLogin(user = @CreateUser(friends = @Friends(count = 2)))
+  @ApiLogin(user = @CreateUser(friends = {
+      @Friend,
+      @Friend
+  }))
   void createUserWithFriendsTest(@User UserJson user) {
     Assertions.assertAll(
         () -> Assertions.assertNotNull(user),
@@ -62,11 +65,15 @@ class CreateUserExtensionTest extends BaseWebTest {
 
   @Test
   @ApiLogin(user = @CreateUser(
-      friends = @Friends(
-          count = 2,
-          pending = true,
-          friendshipRequestType = FriendshipRequestType.OUTCOME
-      ))
+      friends = {
+          @Friend(
+              pending = true,
+              friendshipRequestType = FriendshipRequestType.OUTCOME
+          ),
+          @Friend(
+              pending = true,
+              friendshipRequestType = FriendshipRequestType.OUTCOME
+          )})
   )
   void createUserWithFriendsRequestsTest(@User UserJson user) {
     Assertions.assertAll(
@@ -89,11 +96,15 @@ class CreateUserExtensionTest extends BaseWebTest {
 
   @Test
   @ApiLogin(user = @CreateUser(
-      friends = @Friends(
-          count = 2,
-          pending = true,
-          friendshipRequestType = FriendshipRequestType.INCOME
-      ))
+      friends = {
+          @Friend(
+              pending = true,
+              friendshipRequestType = FriendshipRequestType.INCOME
+          ),
+          @Friend(
+              pending = true,
+              friendshipRequestType = FriendshipRequestType.INCOME
+          )})
   )
   void createUserWithFriendsIncomeRequestsTest(@User UserJson user) {
     Assertions.assertAll(
@@ -111,6 +122,37 @@ class CreateUserExtensionTest extends BaseWebTest {
     Assertions.assertAll(
         () -> Assertions.assertNotNull(friendsRequests),
         () -> Assertions.assertEquals(0, friendsRequests.size())
+    );
+  }
+
+  @Test
+  @ApiLogin(user = @CreateUser(
+      friends = {
+          @Friend(
+              pending = true,
+              friendshipRequestType = FriendshipRequestType.INCOME
+          ),
+          @Friend(
+              pending = true,
+              friendshipRequestType = FriendshipRequestType.OUTCOME
+          )})
+  )
+  void createUserWithFriendsIncomeAndOutcomeRequestsTest(@User UserJson user) {
+    Assertions.assertAll(
+        () -> Assertions.assertNotNull(user),
+        () -> Assertions.assertNotNull(user.id())
+    );
+
+    var friends = friendsApiClient.friends(user.username(), false);
+    Assertions.assertEquals(0, friends.size());
+
+    var friendsInvitations = friendsApiClient.invitations(user.username());
+    Assertions.assertEquals(1, friendsInvitations.size());
+
+    var friendsRequests = friendsApiClient.friends(user.username(), true);
+    Assertions.assertAll(
+        () -> Assertions.assertNotNull(friendsRequests),
+        () -> Assertions.assertEquals(1, friendsRequests.size())
     );
   }
 }
