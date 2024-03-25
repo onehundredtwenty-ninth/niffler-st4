@@ -10,7 +10,7 @@ public class RegisterApiClient extends RestClient {
   private final RegisterApi registerApi;
 
   public RegisterApiClient() {
-    super("http://127.0.0.1:9000",
+    super(CFG.registerUrl(),
         true,
         new ResponceCookieInterceptor(), new RequestCookieInterceptor());
     registerApi = retrofit.create(RegisterApi.class);

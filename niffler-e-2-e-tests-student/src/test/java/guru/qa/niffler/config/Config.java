@@ -10,6 +10,18 @@ public interface Config {
 
   String authUrl();
 
+  String categoryUrl();
+
+  String currencyUrl();
+
+  String friendsUrl();
+
+  String registerUrl();
+
+  String spendUrl();
+
+  String userUrl();
+
   String gatewayUrl();
 
   String frontUrl();
