@@ -10,7 +10,7 @@ public class FriendsApiClient extends RestClient {
   private final FriendsApi friendsApi;
 
   public FriendsApiClient() {
-    super("http://127.0.0.1:8089");
+    super(CFG.friendsUrl());
     friendsApi = retrofit.create(FriendsApi.class);
   }
 

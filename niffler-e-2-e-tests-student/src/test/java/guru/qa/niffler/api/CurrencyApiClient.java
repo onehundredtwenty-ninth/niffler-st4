@@ -10,7 +10,7 @@ public class CurrencyApiClient extends RestClient {
   private final CurrencyApi currencyApi;
 
   public CurrencyApiClient() {
-    super("http://127.0.0.1:8091");
+    super(CFG.currencyUrl());
     this.currencyApi = retrofit.create(CurrencyApi.class);
   }
 

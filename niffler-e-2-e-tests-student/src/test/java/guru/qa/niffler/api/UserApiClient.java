@@ -9,7 +9,7 @@ public class UserApiClient extends RestClient {
   private final UserApi userApi;
 
   public UserApiClient() {
-    super("http://127.0.0.1:8089");
+    super(CFG.userUrl());
     userApi = retrofit.create(UserApi.class);
   }
 

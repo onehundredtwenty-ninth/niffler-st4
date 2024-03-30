@@ -13,6 +13,36 @@ public class LocalConfig implements Config {
   }
 
   @Override
+  public String categoryUrl() {
+    return "http://127.0.0.1:8093";
+  }
+
+  @Override
+  public String currencyUrl() {
+    return "http://127.0.0.1:8091";
+  }
+
+  @Override
+  public String friendsUrl() {
+    return "http://127.0.0.1:8089";
+  }
+
+  @Override
+  public String registerUrl() {
+    return "http://127.0.0.1:9000";
+  }
+
+  @Override
+  public String spendUrl() {
+    return "http://127.0.0.1:8093";
+  }
+
+  @Override
+  public String userUrl() {
+    return "http://127.0.0.1:8089";
+  }
+
+  @Override
   public String gatewayUrl() {
     return "http://gateway.niffler.dc:8090";
   }

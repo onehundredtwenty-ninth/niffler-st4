@@ -9,7 +9,7 @@ public class CategoryApiClient extends RestClient {
   private final CategoryApi categoryApi;
 
   public CategoryApiClient() {
-    super("http://127.0.0.1:8093");
+    super(CFG.categoryUrl());
     categoryApi = retrofit.create(CategoryApi.class);
   }
 

@@ -12,7 +12,7 @@ public class SpendApiClient extends RestClient {
   private final SpendApi spendApi;
 
   public SpendApiClient() {
-    super("http://127.0.0.1:8093");
+    super(CFG.spendUrl());
     spendApi = retrofit.create(SpendApi.class);
   }
 
