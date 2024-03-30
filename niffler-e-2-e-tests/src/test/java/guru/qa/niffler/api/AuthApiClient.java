@@ -5,6 +5,7 @@ import guru.qa.niffler.api.interceptor.CodeInterceptor;
 import guru.qa.niffler.jupiter.extension.ApiLoginExtension;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
@@ -40,7 +41,7 @@ public class AuthApiClient extends RestClient {
     JsonNode responseBody = authApi.token(
         "Basic " + new String(Base64.getEncoder().encode("client:secret".getBytes(StandardCharsets.UTF_8))),
         "client",
-        "http://127.0.0.1:3000/authorized",
+        CFG.frontUrl() + "/authorized",
         "authorization_code",
         ApiLoginExtension.getCode(context),
         ApiLoginExtension.getCodeVerifier(context)
@@ -48,5 +49,10 @@ public class AuthApiClient extends RestClient {
 
     final String token = responseBody.get("id_token").asText();
     ApiLoginExtension.setToken(context, token);
+  }
+
+  public void register(String username, String password) throws IOException {
+    authApi.registerForm().execute();
+    authApi.submitRegister(username, password, password, ApiLoginExtension.getCsrfToken()).execute();
   }
 }
